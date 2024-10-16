@@ -17,7 +17,7 @@ export default function TabFourScreen() {
         <Paragraph content="Versão 1.0.0"/>
         <Paragraph content="Foto da capa: Heshan Perera na Unsplash" />
         <Button content="logout" type="white" onPress={() => {
-          navigation.navigate('login')
+          navigation.navigate('index')
         }}  style={{ marginTop: 40, marginBottom: 32, height: 56, width: '100%' }}/>
       </Container>
     </>

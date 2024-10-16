@@ -7,7 +7,6 @@ import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { ThemeProvider } from "styled-components/native";
 import { DarkTheme, DefaultTheme } from "@/constants/Colors";
-import LoginScreen from "./login";
 import { SafeAreaView } from "react-native";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -53,9 +52,8 @@ export default function RootLayout() {
       }}
     >
       <ThemeProvider theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-
-        <Stack initialRouteName="login">
-          <Stack.Screen name="login" options={{ headerShown: false }} />
+        <Stack initialRouteName={user.email ? "(tabs)" : "index"}>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="cadastro" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>

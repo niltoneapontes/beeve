@@ -5,11 +5,13 @@ import Title from "@/components/Title";
 import Paragraph from "@/components/Paragraph";
 import { Container } from "../styles/homeStyle";
 import { DarkTheme, DefaultTheme } from "@/constants/Colors";
+import FloatingButton from "@/components/FloatingButton";
+import { useState } from "react";
 
 export default function HomeScreen() {
   const colorScheme = useColorScheme()
 
-  const data = [
+  const [data, setData] = useState([
     {
       image: Background,
       title: "Heineken",
@@ -28,12 +30,12 @@ export default function HomeScreen() {
       subtitle: "Descrição",
       rate: 5,
     }
-  ]
+  ])
 
   return (
     <Container>
       <Title content="Suas bebidas" />
-      <Paragraph content="Cadastre aqui cafés,chás, cervejas, refrigerantes ou qualquer outra bebida que deseje avaliar."/>
+      <Paragraph content="Cadastre aqui cafés,chás, cervejas, refrigerantes ou qualquer outra bebida que deseje avaliar." style={{ marginVertical: 8 }}/>
       <FlatList
         style={{
           width: "100%",
@@ -42,12 +44,22 @@ export default function HomeScreen() {
         }}
         data={data}
         ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+        ListFooterComponent={() => <View style={{ height: 88 }} />}
         keyExtractor={() => Math.random().toString()}
         key={Math.random().toString()}
         renderItem={({item}) => (
           <Card key={Math.random().toString()} image={item.image} title={item.title} subtitle={item.subtitle} rate={item.rate} onPress={() => {}}></Card>
         )}
       />
+      <FloatingButton iconName='plus' onPress={() => {
+        const newData = [...data, {
+          image: Background,
+          title: "Café 3 Corações",
+          subtitle: "Descrição",
+          rate: 5,
+        }]
+        setData(newData)
+      }} type="primary"/>
     </Container>
   );
 }

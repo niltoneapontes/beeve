@@ -1,19 +1,19 @@
 import { DarkTheme } from '@/constants/Colors'
 import React from 'react'
-import { TextInput } from 'react-native-paper'
+import { TextInput, TextInputProps} from 'react-native-paper'
 
-interface IInput {
+interface IInput extends TextInputProps {
     label: string;
     value: string;
-    onChange: React.Dispatch<React.SetStateAction<string>>;
+    onChangeText: React.Dispatch<React.SetStateAction<string>>;
 }
 
-function Input({label, value, onChange}: IInput) {
+function Input({label, value, onChangeText, ...props}: IInput) {
   return <TextInput
   label={label}
   activeOutlineColor={DarkTheme.primary}
   value={value}
-  onChangeText={text => onChange(text)}
+  onChangeText={text => onChangeText(text)}
   style={{
     backgroundColor: 'transparent',
     width: "100%",
@@ -21,6 +21,7 @@ function Input({label, value, onChange}: IInput) {
     marginVertical: 4
   }}
   mode='outlined'
+  {...props}
 />
 }
 

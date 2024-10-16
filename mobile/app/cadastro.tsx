@@ -30,15 +30,15 @@ export default function CadastroScreen({onCadastro}: ICadastroScreen) {
       }}/>
       <TextContainer>
         <Title content='Cadastro' style={{ marginTop: 24, marginBottom: 8, fontSize: 32 }}/>
-        <Input label="Nome Completo" value={email} onChange={setEmail}></Input>
-        <Input label="E-mail" value={email} onChange={setEmail}></Input>
-        <Input label="Username" value={email} onChange={setEmail}></Input>
-        <Input label="Data de Nascimento" value={email} onChange={setEmail}></Input>
-        <Input label="Senha" value={password} onChange={setPassword}></Input>
-        <Input label="Confirmação da Senha" value={password} onChange={setPassword}></Input>
+        <Input label="Nome Completo" value={email} onChangeText={setEmail}></Input>
+        <Input label="E-mail" value={email} onChangeText={setEmail}></Input>
+        <Input label="Username" value={email} onChangeText={setEmail}></Input>
+        <Input label="Data de Nascimento" value={email} onChangeText={setEmail}></Input>
+        <Input label="Senha" value={password} onChangeText={setPassword}></Input>
+        <Input label="Confirmação da Senha" value={password} onChangeText={setPassword}></Input>
         <ButtonContainer>
           <Button content="voltar" type='white'  style={{ width: "49%" }} onPress={() => {
-            navigation.navigate("login")
+            navigation.navigate("index")
           }} />
           <View  style={{ width: "2%" }}/>
           <Button content="cadastrar" type='primary' style={{ width: "49%" }} onPress={() => onCadastro({
