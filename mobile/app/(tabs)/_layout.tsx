@@ -2,36 +2,58 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { useTheme } from 'styled-components/native';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const theme = useTheme()
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: 'Perfil',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
-          ),
-        }}
-      />
-    </Tabs>
+        <Tabs
+        screenOptions={{
+          tabBarActiveTintColor: theme.primary,
+          headerShown: false,
+          tabBarStyle: {
+            height: 64,
+            backgroundColor: theme.backgroundColor
+          },
+          tabBarShowLabel: false,
+        }}>
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: 'Home',
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon name="home" color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="search"
+          options={{
+            title: 'Pesquisar',
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon name="search" color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: 'Perfil',
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon name='user' color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="settings"
+          options={{
+            title: 'Configurações',
+            tabBarIcon: ({ color, focused }) => (
+              <TabBarIcon name='settings' color={color} />
+            ),
+          }}
+        />
+      </Tabs>
   );
 }
