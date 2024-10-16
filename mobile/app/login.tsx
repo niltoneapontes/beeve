@@ -31,11 +31,11 @@ export default function LoginScreen({onLogin}: ILoginScreen) {
         <Input label="E-mail" value={email} onChange={setEmail}></Input>
         <Input label="Password" value={password} onChange={setPassword}></Input>
         <ButtonContainer>
-          <Button content="login" type='primary' onPress={() => onLogin({
+          <Button content="login" type='primary' style={{ width: "100%" }} onPress={() => onLogin({
             email,
             password
           })} />
-          <Button content="cadastro" type='white' onPress={() => {
+          <Button content="cadastro" type='white' style={{ width: "100%" }} onPress={() => {
             navigation.navigate('cadastro')
           }} />
         </ButtonContainer>

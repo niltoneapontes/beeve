@@ -10,6 +10,7 @@ import { TextInput } from 'react-native-paper'
 import { DarkTheme } from '@/constants/Colors'
 import Input from '@/components/Input'
 import { IUser } from './_layout'
+import { useNavigation } from 'expo-router'
 
 interface ICadastroScreen {
   onCadastro: React.Dispatch<React.SetStateAction<IUser>>
@@ -20,6 +21,8 @@ export default function CadastroScreen({onCadastro}: ICadastroScreen) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
+  const navigation = useNavigation<any>()
+
   return (
     <Container>
       <Image source={Background} resizeMode="cover" style={{
@@ -27,7 +30,6 @@ export default function CadastroScreen({onCadastro}: ICadastroScreen) {
       }}/>
       <TextContainer>
         <Title content='Cadastro' style={{ marginTop: 24, marginBottom: 8, fontSize: 32 }}/>
-        <View style={{ height: 8 }}></View>
         <Input label="Nome Completo" value={email} onChange={setEmail}></Input>
         <Input label="E-mail" value={email} onChange={setEmail}></Input>
         <Input label="Username" value={email} onChange={setEmail}></Input>
@@ -35,9 +37,11 @@ export default function CadastroScreen({onCadastro}: ICadastroScreen) {
         <Input label="Senha" value={password} onChange={setPassword}></Input>
         <Input label="Confirmação da Senha" value={password} onChange={setPassword}></Input>
         <ButtonContainer>
-          <Button content="voltar" type='white' onPress={() => {}} />
-          <View style={{ width: 8 }}/>
-          <Button content="cadastrar" type='primary' onPress={() => onCadastro({
+          <Button content="voltar" type='white'  style={{ width: "49%" }} onPress={() => {
+            navigation.navigate("login")
+          }} />
+          <View  style={{ width: "2%" }}/>
+          <Button content="cadastrar" type='primary' style={{ width: "49%" }} onPress={() => onCadastro({
             email,
             password
           })} />

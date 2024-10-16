@@ -24,7 +24,7 @@ function Button({ content, type, onPress, ...props }: IButton) {
   }
   
   return (
-    <Container type={type} style={{ height: 56, width: "100%"}} onPress={onPress} {...props}>
+    <Container type={type} style={{ height: 56 }} onPress={onPress} {...props}>
       <ButtonText textColor={color()} style={{fontSize: 20}}>{content}</ButtonText>
     </Container>
   )

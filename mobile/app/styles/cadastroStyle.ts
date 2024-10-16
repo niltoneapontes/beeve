@@ -4,8 +4,9 @@ export const Container = styled.View`
     background-color: ${props => props.theme.backgroundColor};
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     justify-content: flex-end;
+    width: 100%;
 `
 
 export const TextContainer = styled.View`
