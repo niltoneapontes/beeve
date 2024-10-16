@@ -7,9 +7,11 @@ import { Container } from "../styles/homeStyle";
 import { DarkTheme, DefaultTheme } from "@/constants/Colors";
 import FloatingButton from "@/components/FloatingButton";
 import { useState } from "react";
+import { useNavigation } from "expo-router";
 
 export default function HomeScreen() {
   const colorScheme = useColorScheme()
+  const navigation = useNavigation<any>()
 
   const [data, setData] = useState([
     {
@@ -48,17 +50,19 @@ export default function HomeScreen() {
         keyExtractor={() => Math.random().toString()}
         key={Math.random().toString()}
         renderItem={({item}) => (
-          <Card key={Math.random().toString()} image={item.image} title={item.title} subtitle={item.subtitle} rate={item.rate} onPress={() => {}}></Card>
+          <Card 
+          key={Math.random().toString()} 
+          image={item.image} 
+          title={item.title} 
+          subtitle={item.subtitle} 
+          rate={item.rate} 
+          onPress={() => {
+            navigation.navigate("beverage", {})
+          }} />
         )}
       />
       <FloatingButton iconName='plus' onPress={() => {
-        const newData = [...data, {
-          image: Background,
-          title: "Café 3 Corações",
-          subtitle: "Descrição",
-          rate: 5,
-        }]
-        setData(newData)
+        navigation.navigate('beverage')
       }} type="primary"/>
     </Container>
   );

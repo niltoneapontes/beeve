@@ -18,7 +18,7 @@ function Card({ image, title, subtitle, rate, onPress }: IButton) {
   for(let i = 0; i < 5; i++) {
     if(i < rate) {
       stars.push(
-        <MaterialIcons key={Math.random().toString()} name='star-rate' color={DarkTheme.secondary} size={24}></MaterialIcons>
+        <MaterialIcons key={Math.random().toString()} name='star' color={DarkTheme.secondary} size={24}></MaterialIcons>
       )
     } else {
       stars.push(
