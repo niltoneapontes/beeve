@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ButtonContainer, Container, TextContainer } from './styles/cadastroStyle'
+import { ButtonContainer, Container, TextContainer } from './styles/signupStyle'
 import Title from '@/components/Title'
 import { Image, View } from 'react-native'
 import Background from '@/assets/images/background.png'
@@ -12,11 +12,11 @@ import Input from '@/components/Input'
 import { IUser } from './_layout'
 import { useNavigation } from 'expo-router'
 
-interface ICadastroScreen {
-  onCadastro: React.Dispatch<React.SetStateAction<IUser>>
+interface ISignupScreen {
+  onSignup: React.Dispatch<React.SetStateAction<IUser>>
 }
 
-export default function CadastroScreen({onCadastro}: ICadastroScreen) {
+export default function SignupScreen({onSignup}: ISignupScreen) {
   const theme = useTheme()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -41,7 +41,7 @@ export default function CadastroScreen({onCadastro}: ICadastroScreen) {
             navigation.navigate("index")
           }} />
           <View  style={{ width: "2%" }}/>
-          <Button content="cadastrar" type='primary' style={{ width: "49%" }} onPress={() => onCadastro({
+          <Button content="cadastrar" type='primary' style={{ width: "49%" }} onPress={() => onSignup({
             email,
             password
           })} />

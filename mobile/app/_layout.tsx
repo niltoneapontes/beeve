@@ -1,6 +1,9 @@
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
+import * as eva from "@eva-design/eva";
+import { default as themeExtension} from "@/constants/theme-extension.json";
+
 import { useEffect, useState } from "react";
 import "react-native-reanimated";
 
@@ -8,6 +11,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { ThemeProvider } from "styled-components/native";
 import { DarkTheme, DefaultTheme } from "@/constants/Colors";
 import { SafeAreaView } from "react-native";
+import { ApplicationProvider } from "@ui-kitten/components";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -41,23 +45,28 @@ export default function RootLayout() {
   }
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        width: "100%",
-        backgroundColor:
-          colorScheme === "dark"
-            ? DarkTheme.backgroundColor
-            : DefaultTheme.backgroundColor,
-      }}
-    >
-      <ThemeProvider theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack initialRouteName={user.email ? "(tabs)" : "index"}>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="cadastro" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        </Stack>
-      </ThemeProvider>
-    </SafeAreaView>
+    <ApplicationProvider {...eva} theme={{...(colorScheme === "dark" ? eva.dark : eva.light), ...themeExtension}}>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          width: "100%",
+          backgroundColor:
+            colorScheme === "dark"
+              ? DarkTheme.backgroundColor
+              : DefaultTheme.backgroundColor,
+        }}
+      >
+        <ThemeProvider
+          theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
+          <Stack initialRouteName={user.email ? "(tabs)" : "index"}>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="signup" options={{ headerShown: false }} />
+            <Stack.Screen name="beverage" options={{ headerShown: false }} />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          </Stack>
+        </ThemeProvider>
+      </SafeAreaView>
+    </ApplicationProvider>
   );
 }
