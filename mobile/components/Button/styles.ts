@@ -1,7 +1,7 @@
 import styled from "styled-components/native";
 
 interface ButtonProps {
-    type: 'primary' | 'white' | 'danger'
+    type: 'primary' | 'white' | 'black'
 }
 
 interface ButtonTextProps {

@@ -1,7 +1,7 @@
 import React from 'react'
 import { ButtonText, Container } from './styles'
-import { Text, TouchableOpacityProps } from 'react-native';
-import { DarkTheme } from '@/constants/Colors';
+import { TouchableOpacityProps } from 'react-native';
+import { useColorScheme } from '@/hooks/useColorScheme';
 
 interface IButton extends TouchableOpacityProps {
     content: string;
@@ -10,6 +10,21 @@ interface IButton extends TouchableOpacityProps {
 }
 
 function Button({ content, type, onPress, ...props }: IButton) {
+  const colorScheme = useColorScheme();
+
+  const backgroundColor = () => {
+    switch(type) {
+      case 'primary':
+        return 'primary'
+      case 'danger':
+        return colorScheme === "dark" ? 'black' : 'white'
+      case 'white':
+        return colorScheme === "dark" ? 'black' : 'white'
+      default:
+        return 'primary'
+    }
+  }
+
   const color = () => {
     switch(type) {
       case 'primary':
@@ -17,14 +32,14 @@ function Button({ content, type, onPress, ...props }: IButton) {
       case 'danger':
         return 'danger'
       case 'white':
-        return 'primary'
+        return colorScheme === "dark" ? 'white' : 'primary'
       default:
-        return 'primary'
+        return 'white'
     }
   }
   
   return (
-    <Container type={type} style={{ height: 56 }} onPress={onPress} {...props}>
+    <Container type={backgroundColor()} style={{ height: 56 }} onPress={onPress} {...props}>
       <ButtonText textColor={color()} style={{fontSize: 20}}>{content}</ButtonText>
     </Container>
   )

@@ -32,8 +32,8 @@ export default function LoginScreen() {
               }
             }
           } />
-          <Button content="cadastro" type='white' style={{ width: "100%" }} onPress={() => {
-            navigation.navigate('cadastro')
+          <Button content="cadastro" type='white' style={{ width: "100%", marginTop: 8}} onPress={() => {
+            navigation.navigate('signup')
           }} />
         </ButtonContainer>
       </TextContainer>

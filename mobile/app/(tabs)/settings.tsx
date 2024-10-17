@@ -14,8 +14,8 @@ export default function TabFourScreen() {
       <Container>
         <Title content="Configurações" style={{ marginTop: 40, marginBottom: 32, fontSize: 32 }} />
         <View style={{ flex: 1 }} />
-        <Paragraph content="Versão 1.0.0"/>
         <Paragraph content="Foto da capa: Heshan Perera na Unsplash" />
+        <Paragraph content="Versão 1.0.0"/>
         <Button content="logout" type="white" onPress={() => {
           navigation.navigate('index')
         }}  style={{ marginTop: 40, marginBottom: 32, height: 56, width: '100%' }}/>

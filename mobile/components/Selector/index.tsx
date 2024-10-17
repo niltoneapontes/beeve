@@ -25,7 +25,7 @@ export const Selector = ({selectedIndex, setSelectedIndex}: ISelector): React.Re
   const displayValue = data[selectedIndex.row];
 
   const renderOption = (title: string): React.ReactElement => (
-    <SelectItem title={title} />
+    <SelectItem key={Math.random().toString()} title={title} />
   );
 
   return (

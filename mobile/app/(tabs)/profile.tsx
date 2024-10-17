@@ -5,6 +5,7 @@ import Paragraph from '@/components/Paragraph';
 import Button from '@/components/Button';
 import { DarkTheme } from '@/constants/Colors';
 import Background from '@/assets/images/background.png'
+import Spacer from '@/components/Spacer';
 
 export default function TabThreeScreen() {
   return (
@@ -21,10 +22,10 @@ export default function TabThreeScreen() {
           backgroundColor: DarkTheme.secondary,
           borderRadius: 80 }} />
         <Title content="Nilton Pontes" style={{ marginTop: 40, marginBottom: 32, fontSize: 32 }} />
-        <View style={{ flex: 1 }} />
         <Paragraph content="@niltoneapontes"/>
         <Paragraph content="niltoneapontes@gmail.com" />
         <Paragraph content="30 anos" />
+        <Spacer />
         <Button content="editar" type="primary" onPress={() => {}}  style={{ marginTop: 40, marginBottom: 32, height: 56, width: '100%' }}/>
       </Container>
     </>
