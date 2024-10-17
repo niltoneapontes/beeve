@@ -19,7 +19,10 @@ interface ISignupScreen {
 export default function SignupScreen({onSignup}: ISignupScreen) {
   const theme = useTheme()
   const [email, setEmail] = useState("")
+  const [username, setUsername] = useState("")
+  const [birthdate, setBirthdate] = useState("")
   const [password, setPassword] = useState("")
+  const [passwordConfirmation, setPasswordConfirmation] = useState("")
 
   const navigation = useNavigation<any>()
 
@@ -31,11 +34,11 @@ export default function SignupScreen({onSignup}: ISignupScreen) {
       <TextContainer>
         <Title content='Cadastro' style={{ marginTop: 24, marginBottom: 8, fontSize: 32 }}/>
         <Input label="Nome Completo" value={email} onChangeText={setEmail}></Input>
-        <Input label="E-mail" value={email} onChangeText={setEmail}></Input>
-        <Input label="Username" value={email} onChangeText={setEmail}></Input>
-        <Input label="Data de Nascimento" value={email} onChangeText={setEmail}></Input>
-        <Input label="Senha" value={password} onChangeText={setPassword}></Input>
-        <Input label="Confirmação da Senha" value={password} onChangeText={setPassword}></Input>
+        <Input label="E-mail" value={email} onChangeText={setEmail} textContentType='emailAddress'></Input>
+        <Input label="Username" value={username} onChangeText={setUsername}></Input>
+        <Input label="Data de Nascimento" value={birthdate} onChangeText={setBirthdate} textContentType='birthdateDay'></Input>
+        <Input label="Senha" value={password} onChangeText={setPassword} textContentType='password' secureTextEntry></Input>
+        <Input label="Confirmação da Senha" value={passwordConfirmation} onChangeText={setPasswordConfirmation} textContentType='password' secureTextEntry></Input>
         <ButtonContainer>
           <Button content="voltar" type='white'  style={{ width: "49%" }} onPress={() => {
             navigation.navigate("index")

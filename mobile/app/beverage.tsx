@@ -29,6 +29,7 @@ export default function ProductDetailScreen({onSaveProduct}: IProductDetailScree
     <Container>
       <Image source={Background} resizeMode="cover" style={{
         width: "100%",
+        height: "50%"
       }}/>
       <TextContainer>
         <Title content='Avaliação' style={{ marginTop: 24, marginBottom: 8, fontSize: 32 }}/>

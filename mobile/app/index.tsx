@@ -17,13 +17,14 @@ export default function LoginScreen() {
     <Container>
       <Image source={Background} resizeMode="cover" style={{
         width: "100%",
+        height: "50%"
       }}/>
       <TextContainer>
         <Title content='Esse é o Beeve!' style={{ marginTop: 24, marginBottom: 8, fontSize: 32 }}/>
         <Paragraph content="Descubra, avalie e compartilhe suas experiências com bebidas." />
         <View style={{ height: 8 }}></View>
-        <Input label="E-mail" value={email} onChangeText={setEmail} autoCapitalize='none'></Input>
-        <Input label="Password" value={password} onChangeText={setPassword}></Input>
+        <Input label="E-mail" value={email} onChangeText={setEmail} autoCapitalize='none' textContentType='emailAddress'></Input>
+        <Input label="Password" value={password} onChangeText={setPassword} textContentType='password' secureTextEntry></Input>
         <ButtonContainer>
           <Button content="login" type='primary' style={{ width: "100%" }} onPress={() => 
             {
