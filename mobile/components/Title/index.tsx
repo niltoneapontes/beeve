@@ -8,7 +8,7 @@ interface ITitle extends TextProps {
 
 function Title({ content, ...props }: ITitle) {
   return (
-    <TitleText style={{ fontSize: 32, marginTop: 24 }} {...props}>
+    <TitleText style={{ fontSize: 32, marginTop: 36 }} {...props}>
         { content }
     </TitleText>
   )
