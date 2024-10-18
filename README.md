@@ -9,7 +9,7 @@ Algumas das tecnologias e bibliotecas utilizadas neste projeto foram:
 
 * Backend: Node.js, Nest, Prisma, MySQL e Docker;
 * Frontend: React.js, Next.js, ChakraUI, entre outras;
-* Mobile: React Native, Expo, React-native-reanimated, entre outras.
+* Mobile: React Native, Expo, Styled-Components, React-native-reanimated, entre outras.
 
 ## Figma
 
