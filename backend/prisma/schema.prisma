@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://root:rootpassword@localhost:3306/beevedb" // attention, folks... do not use this in production LOL
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  email     String   @unique
+  name      String?
+  username  String?
+  birthdate String?
+  password  String?
+  socialAccountId   String?
+  socialAccountProvider String?
+}
+
+model Beverage {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  name      String
+  description   String?
+  type      String?
+  rating    Int
+}

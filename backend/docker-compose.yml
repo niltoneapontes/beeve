@@ -1,0 +1,22 @@
+services:
+  db:
+    image: mysql
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: beevedb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: userpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - db_network
+
+networks:
+  db_network:
+    driver: bridge
+
+volumes:
+  db_data:
