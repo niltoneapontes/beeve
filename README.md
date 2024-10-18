@@ -16,3 +16,7 @@ Algumas das tecnologias e bibliotecas utilizadas neste projeto foram:
 O Figma do projeto é: https://www.figma.com/design/Rw1XydsCwxxLFmPSTYW0Vs/Bubble-Solutions?node-id=418-2
 
 ![print do Figma para o MVP](./mvp.png)
+
+## Download & develop
+
+As instruções para cada uma das camadas do software (backend, frontend e mobile) estão em seus respectivos arquivos README.
