@@ -2,20 +2,21 @@ import { Injectable } from '@nestjs/common';
 import { UsersRepository } from './user.repository';
 import { PrismaService } from 'database/prisma.service';
 import { User } from 'entities/user';
+import { UserDTO } from './user.dto';
 
 @Injectable()
 export class UsersRepositoryImpl implements UsersRepository {
   constructor(private prisma: PrismaService) {}
-  async create(
-    createdAt: string,
-    email: string,
-    name: string,
-    username: string,
-    birthdate: string,
-    password: string,
-    socialAccountId: string,
-    socialAccountProvider: string,
-  ): Promise<User> {
+  async create({
+    createdAt,
+    email,
+    name,
+    username,
+    birthdate,
+    password,
+    socialAccountId,
+    socialAccountProvider,
+  }: UserDTO): Promise<User> {
     try {
       const createdUser = await this.prisma.user.create({
         data: {
@@ -32,20 +33,21 @@ export class UsersRepositoryImpl implements UsersRepository {
 
       return createdUser as unknown as User;
     } catch (error) {
+      console.error('Repository Error: ', error);
       throw Error('Problema ao tentar cadastrar usuário');
     }
   }
-  async edit(
-    id: number,
-    createdAt: string,
-    email: string,
-    name: string,
-    username: string,
-    birthdate: string,
-    password: string,
-    socialAccountId: string,
-    socialAccountProvider: string,
-  ): Promise<User> {
+  async edit({
+    id,
+    createdAt,
+    email,
+    name,
+    username,
+    birthdate,
+    password,
+    socialAccountId,
+    socialAccountProvider,
+  }: UserDTO): Promise<User> {
     try {
       const createdUser = await this.prisma.user.update({
         where: {
@@ -65,6 +67,7 @@ export class UsersRepositoryImpl implements UsersRepository {
 
       return createdUser as unknown as User;
     } catch (error) {
+      console.error('Repository Error: ', error);
       throw Error('Problema ao tentar editar usuário');
     }
   }
@@ -78,6 +81,7 @@ export class UsersRepositoryImpl implements UsersRepository {
 
       return createdUser as unknown as User;
     } catch (error) {
+      console.error('Repository Error: ', error);
       throw Error(
         `Problema ao tentar encontrar usuário com o e-mail: ${email}`,
       );
@@ -93,7 +97,8 @@ export class UsersRepositoryImpl implements UsersRepository {
       });
       return deletedUser as unknown as User;
     } catch (error) {
-      throw Error('Problema ao deletar o usuário.');
+      console.error('Repository Error: ', error);
+      throw Error('Problema ao deletar o usuário');
     }
   }
 }

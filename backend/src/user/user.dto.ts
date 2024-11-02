@@ -22,5 +22,5 @@ export class UserDeleteQueryDTO {
   @IsNotEmpty({
     message: 'Por favor informe o id do usuario',
   })
-  id: number;
+  id: string;
 }
