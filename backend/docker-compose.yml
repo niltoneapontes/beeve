@@ -14,9 +14,48 @@ services:
     networks:
       - db_network
 
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - "./prometheus.yml:/etc/prometheus/prometheus.yml"
+      - "./rules.yml:/etc/prometheus/rules.yml"
+    networks:
+      - localprom
+    ports:
+      - 9090:9090
+  
+  node-exporter:
+    image: prom/node-exporter
+    networks:
+      - localprom
+    ports:
+      - 9100:9100
+
+  alert-manager:
+    image: prom/alertmanager
+    volumes:
+      - "./alertmanager.yml:/alertmanager/alertmanager.yml"
+    networks:
+      - localprom
+    ports:
+      - 9093:9093
+  
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-storage:/var/lib/grafana
+
 networks:
   db_network:
+    driver: bridge
+  localprom:
     driver: bridge
 
 volumes:
   db_data:
+  grafana-storage:
