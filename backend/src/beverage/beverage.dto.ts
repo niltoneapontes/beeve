@@ -27,5 +27,5 @@ export class BeverageDeleteQueryDTO {
   @IsNotEmpty({
     message: 'Por favor informe o id da bebida',
   })
-  id: number;
+  id: string;
 }

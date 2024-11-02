@@ -22,7 +22,10 @@ export class UserController {
       const result = await this.userService.createUser(body);
       return res.status(HttpStatus.CREATED).json(result);
     } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(error);
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: error.message || 'An error has occurred',
+        details: error.stack || error,
+      });
     }
   }
 
@@ -32,17 +35,24 @@ export class UserController {
       const result = await this.userService.editUser(body);
       return res.status(HttpStatus.OK).json(result);
     } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(error);
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: error.message || 'An error has occurred',
+        details: error.stack || error,
+      });
     }
   }
 
   @Delete()
   async deleteUser(@Query() query: UserDeleteQueryDTO, @Res() res: Response) {
+    const idNumber = parseInt(query.id);
     try {
-      const result = await this.userService.deleteUser(query.id);
-      return res.status(HttpStatus.CREATED).json(result);
+      await this.userService.deleteUser(idNumber);
+      return res.status(HttpStatus.NO_CONTENT).send();
     } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(error);
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: error.message || 'An error has occurred',
+        details: error.stack || error,
+      });
     }
   }
 }

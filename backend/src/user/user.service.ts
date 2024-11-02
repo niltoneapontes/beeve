@@ -23,7 +23,7 @@ export class UserService {
         throw Error('E-mail já cadastrado');
       }
 
-      const createdUser = await this.repository.create(
+      const createdUser = await this.repository.create({
         birthdate,
         createdAt,
         email,
@@ -32,11 +32,11 @@ export class UserService {
         socialAccountId,
         socialAccountProvider,
         username,
-      );
+      });
 
       return createdUser;
     } catch (error) {
-      throw Error(`Erro na criação do usuário: ${error}`);
+      throw Error(error);
     }
   }
 
@@ -52,7 +52,7 @@ export class UserService {
     username,
   }: UserDTO): Promise<User> {
     try {
-      const edittedUser = await this.repository.edit(
+      const edittedUser = await this.repository.edit({
         id,
         birthdate,
         createdAt,
@@ -62,11 +62,11 @@ export class UserService {
         socialAccountId,
         socialAccountProvider,
         username,
-      );
+      });
 
       return edittedUser;
     } catch (error) {
-      throw Error(`Erro na edição do usuário: ${error}`);
+      throw Error(error);
     }
   }
 
@@ -75,7 +75,7 @@ export class UserService {
       const deletedUser = await this.repository.delete(id);
       return deletedUser;
     } catch (error) {
-      throw Error(`Erro na edição do usuário: ${error}`);
+      throw Error(error);
     }
   }
 }

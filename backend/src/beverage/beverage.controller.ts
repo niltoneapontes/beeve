@@ -27,7 +27,10 @@ export class BeverageController {
       const result = await this.beverageService.createBeverage(body);
       return res.status(HttpStatus.CREATED).json(result);
     } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(error);
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: error.message || 'An error has occurred',
+        details: error.stack || error,
+      });
     }
   }
 
@@ -37,19 +40,24 @@ export class BeverageController {
       const result = await this.beverageService.editBeverage(body);
       return res.status(HttpStatus.OK).json(result);
     } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(error);
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: error.message || 'An error has occurred',
+        details: error.stack || error,
+      });
     }
   }
 
   @Get()
   async getBeverages(@Query() query: BeverageQueryDTO, @Res() res: Response) {
     try {
-      const result = await this.beverageService.findBeveragesByUser(
-        query.userId,
-      );
+      const userIdInt = parseInt(query.userId);
+      const result = await this.beverageService.findBeveragesByUser(userIdInt);
       return res.status(HttpStatus.OK).json(result);
     } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(error);
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: error.message || 'An error has occurred',
+        details: error.stack || error,
+      });
     }
   }
 
@@ -59,10 +67,14 @@ export class BeverageController {
     @Res() res: Response,
   ) {
     try {
-      await this.beverageService.deleteBeverage(query.id);
-      return res.status(HttpStatus.NO_CONTENT);
+      const idInt = parseInt(query.id);
+      await this.beverageService.deleteBeverage(idInt);
+      return res.status(HttpStatus.NO_CONTENT).send();
     } catch (error) {
-      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(error);
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: error.message || 'An error has occurred',
+        details: error.stack || error,
+      });
     }
   }
 }

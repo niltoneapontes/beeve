@@ -28,7 +28,8 @@ export class BeveragesRepositoryImpl implements BeveragesRepository {
       });
 
       return newBeverage as unknown as Beverage;
-    } catch {
+    } catch (error) {
+      console.error('Repository Error: ', error);
       throw new Error('Não foi possível cadastrar a bebida');
     }
   }
@@ -57,7 +58,8 @@ export class BeveragesRepositoryImpl implements BeveragesRepository {
         },
       });
       return updatedBeverage as unknown as Beverage;
-    } catch {
+    } catch (error) {
+      console.error('Repository Error: ', error);
       throw new Error('Não foi possível editar a bebida');
     }
   }
@@ -71,7 +73,8 @@ export class BeveragesRepositoryImpl implements BeveragesRepository {
       });
 
       return newBeverage as unknown as Beverage[];
-    } catch {
+    } catch (error) {
+      console.error('Repository Error: ', error);
       throw new Error('Não foi possível encontrar as bebidas');
     }
   }
@@ -85,7 +88,8 @@ export class BeveragesRepositoryImpl implements BeveragesRepository {
       });
       return deletedBeverage as unknown as Beverage;
     } catch (error) {
-      throw Error('Problema ao deletar o usuário.');
+      console.error('Repository Error: ', error);
+      throw new Error('Problema ao deletar o usuário.');
     }
   }
 }
