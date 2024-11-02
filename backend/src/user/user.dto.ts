@@ -8,6 +8,7 @@ export class UserDTO {
   @IsNotEmpty({
     message: 'Momento de criacao eh obrigatorio',
   })
+  id: number;
   createdAt: string;
   name: string;
   username: string;
@@ -17,9 +18,9 @@ export class UserDTO {
   socialAccountProvider: string;
 }
 
-export class UserQueryDTO {
+export class UserDeleteQueryDTO {
   @IsNotEmpty({
-    message: 'Por favor informe o e-mail do usuario',
+    message: 'Por favor informe o id do usuario',
   })
-  email: string;
+  id: number;
 }

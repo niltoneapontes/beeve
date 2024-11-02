@@ -83,4 +83,17 @@ export class UsersRepositoryImpl implements UsersRepository {
       );
     }
   }
+
+  async delete(id: number): Promise<User> {
+    try {
+      const deletedUser = await this.prisma.user.delete({
+        where: {
+          id: id,
+        },
+      });
+      return deletedUser as unknown as User;
+    } catch (error) {
+      throw Error('Problema ao deletar o usuário.');
+    }
+  }
 }

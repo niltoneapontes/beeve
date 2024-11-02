@@ -33,6 +33,35 @@ export class BeveragesRepositoryImpl implements BeveragesRepository {
     }
   }
 
+  async edit(
+    id: number,
+    createdAt: string,
+    name: string,
+    description: string,
+    type: string,
+    rating: number,
+    userId: number,
+  ): Promise<Beverage> {
+    try {
+      const updatedBeverage = await this.prisma.beverage.update({
+        where: {
+          id: id,
+        },
+        data: {
+          createdAt,
+          name,
+          description,
+          type,
+          rating,
+          userId,
+        },
+      });
+      return updatedBeverage as unknown as Beverage;
+    } catch {
+      throw new Error('Não foi possível editar a bebida');
+    }
+  }
+
   async findAllByUser(userId: number): Promise<Beverage[]> {
     try {
       const newBeverage = await this.prisma.beverage.findMany({
@@ -44,6 +73,19 @@ export class BeveragesRepositoryImpl implements BeveragesRepository {
       return newBeverage as unknown as Beverage[];
     } catch {
       throw new Error('Não foi possível encontrar as bebidas');
+    }
+  }
+
+  async delete(id: number): Promise<Beverage> {
+    try {
+      const deletedBeverage = await this.prisma.beverage.delete({
+        where: {
+          id: id,
+        },
+      });
+      return deletedBeverage as unknown as Beverage;
+    } catch (error) {
+      throw Error('Problema ao deletar o usuário.');
     }
   }
 }

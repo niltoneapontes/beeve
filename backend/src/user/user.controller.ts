@@ -1,17 +1,48 @@
-import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common';
-import { UsersRepository } from './user.repository';
-import { UserDTO, UserQueryDTO } from './user.dto';
+import {
+  Body,
+  Controller,
+  Delete,
+  HttpStatus,
+  Post,
+  Put,
+  Query,
+  Res,
+} from '@nestjs/common';
+import { UserDeleteQueryDTO, UserDTO } from './user.dto';
+import { UserService } from './user.service';
+import { Response } from 'express';
 
 @Controller('users')
 export class UserController {
-  constructor(private bubbleMembersRepository: UsersRepository) {}
+  constructor(private userService: UserService) {}
 
   @Post()
-  async createBeverage(@Body() body: UserDTO) {}
+  async createUser(@Body() body: UserDTO, @Res() res: Response) {
+    try {
+      const result = await this.userService.createUser(body);
+      return res.status(HttpStatus.CREATED).json(result);
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(error);
+    }
+  }
 
   @Put()
-  async editBeverage(@Body() body: UserDTO) {}
+  async editUser(@Body() body: UserDTO, @Res() res: Response) {
+    try {
+      const result = await this.userService.editUser(body);
+      return res.status(HttpStatus.OK).json(result);
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(error);
+    }
+  }
 
-  @Get()
-  async getBeverages(@Query() query: UserQueryDTO) {}
+  @Delete()
+  async deleteUser(@Query() query: UserDeleteQueryDTO, @Res() res: Response) {
+    try {
+      const result = await this.userService.deleteUser(query.id);
+      return res.status(HttpStatus.CREATED).json(result);
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(error);
+    }
+  }
 }
