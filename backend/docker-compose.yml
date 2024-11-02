@@ -39,6 +39,16 @@ services:
       - localprom
     ports:
       - 9093:9093
+  
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-storage:/var/lib/grafana
 
 networks:
   db_network:
@@ -48,3 +58,4 @@ networks:
 
 volumes:
   db_data:
+  grafana-storage:
