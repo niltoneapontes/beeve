@@ -17,3 +17,7 @@ scrape_configs:
    static_configs:
     - targets:
        - node-exporter:9100
+ - job_name: nestjs_app
+   static_configs:
+    - targets:
+       - docker.for.mac.localhost:3000
