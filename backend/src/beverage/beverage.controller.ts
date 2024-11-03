@@ -16,65 +16,64 @@ import {
 } from './beverage.dto';
 import { Response } from 'express';
 import { BeverageService } from './beverage.service';
-import { Counter } from 'prom-client';
+import { observabilityMethods } from 'observability/methods';
 
 @Controller('beverages')
 export class BeverageController {
   constructor(private beverageService: BeverageService) {}
 
-  counterSuccess = new Counter({
-    name: 'http_requests_beverages_success',
-    help: 'Contagem de requests para o controller de bebidas',
-  });
-
-  counterFailed = new Counter({
-    name: 'http_requests_beverages_failed',
-    help: 'Contagem de requests para o controller de bebidas',
-  });
-
   @Post()
   async createBeverage(@Body() body: BeverageDTO, @Res() res: Response) {
+    const end = observabilityMethods.beveragesPostResponseTime.startTimer();
     try {
       const result = await this.beverageService.createBeverage(body);
-      this.counterSuccess.inc();
+      observabilityMethods.counterBeverageSuccess.inc();
       return res.status(HttpStatus.CREATED).json(result);
     } catch (error) {
-      this.counterFailed.inc();
+      observabilityMethods.counterBeverageFailed.inc();
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: error.message || 'An error has occurred',
         details: error.stack || error,
       });
+    } finally {
+      end();
     }
   }
 
   @Put()
   async editBeverage(@Body() body: BeverageDTO, @Res() res: Response) {
+    const end = observabilityMethods.beveragesPutResponseTime.startTimer();
     try {
       const result = await this.beverageService.editBeverage(body);
-      this.counterSuccess.inc();
+      observabilityMethods.counterBeverageSuccess.inc();
       return res.status(HttpStatus.OK).json(result);
     } catch (error) {
-      this.counterFailed.inc();
+      observabilityMethods.counterBeverageFailed.inc();
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: error.message || 'An error has occurred',
         details: error.stack || error,
       });
+    } finally {
+      end();
     }
   }
 
   @Get()
   async getBeverages(@Query() query: BeverageQueryDTO, @Res() res: Response) {
+    const end = observabilityMethods.beveragesGetResponseTime.startTimer();
     try {
       const userIdInt = parseInt(query.userId);
       const result = await this.beverageService.findBeveragesByUser(userIdInt);
-      this.counterSuccess.inc();
+      observabilityMethods.counterBeverageSuccess.inc();
       return res.status(HttpStatus.OK).json(result);
     } catch (error) {
-      this.counterFailed.inc();
+      observabilityMethods.counterBeverageFailed.inc();
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: error.message || 'An error has occurred',
         details: error.stack || error,
       });
+    } finally {
+      end();
     }
   }
 
@@ -83,17 +82,20 @@ export class BeverageController {
     @Query() query: BeverageDeleteQueryDTO,
     @Res() res: Response,
   ) {
+    const end = observabilityMethods.beveragesDeleteResponseTime.startTimer();
     try {
       const idInt = parseInt(query.id);
       await this.beverageService.deleteBeverage(idInt);
-      this.counterSuccess.inc();
+      observabilityMethods.counterBeverageSuccess.inc();
       return res.status(HttpStatus.NO_CONTENT).send();
     } catch (error) {
-      this.counterFailed.inc();
+      observabilityMethods.counterBeverageFailed.inc();
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: error.message || 'An error has occurred',
         details: error.stack || error,
       });
+    } finally {
+      end();
     }
   }
 }
