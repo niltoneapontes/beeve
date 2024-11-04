@@ -11,12 +11,9 @@ import { Selector } from '@/components/Selector'
 import Rating from '@/components/Rating'
 import Spacer from '@/components/Spacer'
 import { IndexPath } from '@ui-kitten/components'
+import { api, handleRequestError } from '@/api'
 
-interface IProductDetailScreen {
-  onSaveProduct: React.Dispatch<React.SetStateAction<any>>
-}
-
-export default function ProductDetailScreen({onSaveProduct}: IProductDetailScreen) {
+export default function ProductDetailScreen() {
   const theme = useTheme()
   const [name, setName] = useState<string>("")
   const [description, setDescription] = useState<string>("")
@@ -24,6 +21,27 @@ export default function ProductDetailScreen({onSaveProduct}: IProductDetailScree
   const [type, setType] = useState<IndexPath>(new IndexPath(0))
 
   const navigation = useNavigation<any>()
+
+
+  const onSaveProduct = async () => {
+    try {
+      await api.post('/beverages', {
+
+      })
+
+      clearFields()
+      navigation.navigate('(tabs)')
+    } catch(error) {
+      handleRequestError(error)
+    }
+  }
+
+  const clearFields = () => {
+    setName("")
+    setDescription("")
+    setRating(0)
+    setType(new IndexPath(0))
+  }
 
   return (
     <Container>
@@ -48,12 +66,7 @@ export default function ProductDetailScreen({onSaveProduct}: IProductDetailScree
             navigation.navigate("home")
           }} />
           <View  style={{ width: "2%" }}/>
-          <Button content="cadastrar" type='primary' style={{ width: "49%" }} onPress={() => onSaveProduct({
-            name,
-            description,
-            type,
-            rating
-          })} />
+          <Button content="cadastrar" type='primary' style={{ width: "49%" }} onPress={() => onSaveProduct()} />
         </ButtonContainer>
       </TextContainer>
     </Container>
