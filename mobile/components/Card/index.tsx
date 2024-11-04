@@ -31,7 +31,7 @@ function Card({ image, title, subtitle, rate, onPress }: IButton) {
   return (
     <Container onPress={onPress}>
       <CardImage source={image || SampleImage} resizeMode='cover'></CardImage>
-      <View >
+      <View>
         <CardTitle style={{ fontSize: 16 }}>{title}</CardTitle>
         <CardText style={{ fontSize: 16 }}>Tipo: {subtitle}</CardText>
       </View>

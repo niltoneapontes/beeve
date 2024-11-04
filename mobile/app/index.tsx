@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { ButtonContainer, Container, TextContainer } from './styles/loginStyle'
 import Title from '@/components/Title'
 import { Image, View } from 'react-native'
@@ -9,22 +9,32 @@ import Input from '@/components/Input'
 import { useNavigation } from 'expo-router'
 import { api, handleRequestError } from '@/api'
 import axios from 'axios'
+import { AuthContext } from '@/context/auth'
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const navigation = useNavigation<any>()
 
+  const {
+    setUser
+  } = useContext(AuthContext);
+
   const onSignin = async () => {
     try {
-      await api.post('/users/login', {
+      const response = await api.post('/users/login', {
         email: email,
         password: password
       })
 
+      const loggedUser = response.data
+
       setEmail("")
       setPassword("")
 
+      if(setUser) {
+        setUser(loggedUser)
+      }
       navigation.navigate('(tabs)')
     } catch(error) {
       handleRequestError(error)

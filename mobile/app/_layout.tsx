@@ -12,13 +12,20 @@ import { ThemeProvider } from "styled-components/native";
 import { DarkTheme, DefaultTheme } from "@/constants/Colors";
 import { SafeAreaView } from "react-native";
 import { ApplicationProvider } from "@ui-kitten/components";
+import { AuthContext } from "@/context/auth";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export interface IUser {
+  birthdate: string;
+  createdAt: string;
   email: string;
+  name: string;
   password: string;
+  socialAccountId: string;
+  socialAccountProvider: string;
+  username: string;
 }
 
 export default function RootLayout() {
@@ -46,6 +53,7 @@ export default function RootLayout() {
 
   return (
     <ApplicationProvider {...eva} theme={{...(colorScheme === "dark" ? eva.dark : eva.light), ...themeExtension}}>
+      <AuthContext.Provider value={{user, setUser}}>
       <SafeAreaView
         style={{
           flex: 1,
@@ -67,6 +75,7 @@ export default function RootLayout() {
           </Stack>
         </ThemeProvider>
       </SafeAreaView>
+      </AuthContext.Provider>
     </ApplicationProvider>
   );
 }
