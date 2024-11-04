@@ -8,19 +8,21 @@ interface ISelector {
   setSelectedIndex: React.Dispatch<React.SetStateAction<IndexPath>>
 }
 
+export enum beverageTypes {
+  COFFEE = "Café",
+  TEA = "Chá",
+  BEER = "Cerveja",
+  WINE = "Vinho",
+  LIQUOR = "Cachaça",
+  VODKA = "Vodka",
+  GIN = "Gin",
+  OTHER = "Outra",
+}
+
+export const data = Object.values(beverageTypes)
+
 export const Selector = ({selectedIndex, setSelectedIndex}: ISelector): React.ReactElement => {
   const theme = useTheme()
-
-  const data = [
-    "Café",
-    "Chá",
-    "Cerveja",
-    "Vinho",
-    "Cachaça",
-    "Vodka",
-    "Gin",
-    "Outra",
-  ];
 
   const displayValue = data[selectedIndex.row];
 

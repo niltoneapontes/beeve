@@ -6,10 +6,11 @@ import Paragraph from "@/components/Paragraph";
 import { Container } from "../styles/homeStyle";
 import { DarkTheme, DefaultTheme } from "@/constants/Colors";
 import FloatingButton from "@/components/FloatingButton";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigation } from "expo-router";
 import { api, handleRequestError } from "@/api";
 import { ActivityIndicator } from "react-native-paper";
+import { AuthContext } from "@/context/auth";
 
 export interface Beverage {
   image: ImageSourcePropType;
@@ -23,13 +24,16 @@ export default function HomeScreen() {
   const navigation = useNavigation<any>()
 
   const [data, setData] = useState<Beverage[]>([] as Beverage[])
+  const {
+    user
+  } = useContext(AuthContext);
   
   useEffect(() => {
     const getBeverages = async () => {
       try {
         const response = await api.get('/beverages', {
           params: {
-            userId: 1
+            userId: user?.id || 0
           }
         })
         setData(response.data)
