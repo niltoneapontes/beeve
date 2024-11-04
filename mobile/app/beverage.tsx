@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { ButtonContainer, Container, TextContainer } from './styles/beverage'
 import Title from '@/components/Title'
 import { Image, View } from 'react-native'
@@ -12,6 +12,7 @@ import Rating from '@/components/Rating'
 import Spacer from '@/components/Spacer'
 import { IndexPath } from '@ui-kitten/components'
 import { api, handleRequestError } from '@/api'
+import { AuthContext } from '@/context/auth'
 
 export default function ProductDetailScreen() {
   const theme = useTheme()
@@ -22,11 +23,20 @@ export default function ProductDetailScreen() {
 
   const navigation = useNavigation<any>()
 
+  const {
+    user
+  } = useContext(AuthContext);
+
 
   const onSaveProduct = async () => {
     try {
       await api.post('/beverages', {
-
+        createdAt: new Date().toISOString(),
+        description: description,
+        name: name,
+        rating: rating,
+        type: type.toString(),
+        userId: user?.id || 0
       })
 
       clearFields()
