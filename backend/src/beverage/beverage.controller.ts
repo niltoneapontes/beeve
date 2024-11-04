@@ -2,12 +2,17 @@ import {
   Body,
   Controller,
   Delete,
+  FileTypeValidator,
   Get,
   HttpStatus,
+  MaxFileSizeValidator,
+  ParseFilePipe,
   Post,
   Put,
   Query,
   Res,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   BeverageDeleteQueryDTO,
@@ -17,6 +22,7 @@ import {
 import { Response } from 'express';
 import { BeverageService } from './beverage.service';
 import { observabilityMethods } from 'observability/methods';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('beverages')
 export class BeverageController {
@@ -38,6 +44,20 @@ export class BeverageController {
     } finally {
       end();
     }
+  }
+
+  @Post('/image')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadImage(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [new FileTypeValidator({ fileType: 'image/*' })],
+      }),
+    )
+    file: Express.Multer.File,
+    @Res() res: Response,
+  ) {
+    console.log(file);
   }
 
   @Put()
