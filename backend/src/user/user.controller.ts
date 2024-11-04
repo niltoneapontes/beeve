@@ -35,6 +35,27 @@ export class UserController {
     }
   }
 
+  @Post('/login')
+  async loginUser(
+    @Body() body: Pick<UserDTO, 'email' | 'password'>,
+    @Res() res: Response,
+  ) {
+    const end = observabilityMethods.usersPostLoginResponseTime.startTimer();
+    try {
+      const result = await this.userService.login(body);
+      observabilityMethods.counterSuccess.inc();
+      return res.status(HttpStatus.OK).json(result);
+    } catch (error) {
+      observabilityMethods.counterFailed.inc();
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: error.message || 'An error has occurred',
+        details: error.stack || error,
+      });
+    } finally {
+      end();
+    }
+  }
+
   @Put()
   async editUser(@Body() body: UserDTO, @Res() res: Response) {
     const end = observabilityMethods.usersPutResponseTime.startTimer();

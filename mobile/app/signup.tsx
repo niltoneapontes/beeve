@@ -11,13 +11,12 @@ import { DarkTheme } from '@/constants/Colors'
 import Input from '@/components/Input'
 import { IUser } from './_layout'
 import { useNavigation } from 'expo-router'
+import { api, handleRequestError } from '@/api'
+import axios from 'axios'
 
-interface ISignupScreen {
-  onSignup: React.Dispatch<React.SetStateAction<IUser>>
-}
-
-export default function SignupScreen({onSignup}: ISignupScreen) {
+export default function SignupScreen() {
   const theme = useTheme()
+  const [fullname, setFullname] = useState("")
   const [email, setEmail] = useState("")
   const [username, setUsername] = useState("")
   const [birthdate, setBirthdate] = useState("")
@@ -26,6 +25,38 @@ export default function SignupScreen({onSignup}: ISignupScreen) {
 
   const navigation = useNavigation<any>()
 
+  const onSignup = async () => {
+    if(password != passwordConfirmation) {
+      return
+    }
+
+    try {
+      await api.post('/users', {
+        birthdate: birthdate,
+        createdAt: new Date().toISOString(),
+        email: email,
+        name: fullname,
+        password: password,
+        socialAccountId: null,
+        socialAccountProvider: null,
+        username: username
+      })
+
+      navigation.navigate('(tabs)')
+    } catch(error) {
+      handleRequestError(error)
+    }
+  }
+
+  const clearFields = () => {
+    setFullname("")
+    setEmail("")
+    setUsername("")
+    setBirthdate("")
+    setPassword("")
+    setPasswordConfirmation("")
+  }
+
   return (
     <Container>
       <Image source={Background} resizeMode="cover" style={{
@@ -33,7 +64,7 @@ export default function SignupScreen({onSignup}: ISignupScreen) {
       }}/>
       <TextContainer>
         <Title content='Cadastro' style={{ marginTop: 24, marginBottom: 8, fontSize: 32 }}/>
-        <Input label="Nome Completo" value={email} onChangeText={setEmail}></Input>
+        <Input label="Nome Completo" value={fullname} onChangeText={setFullname}></Input>
         <Input label="E-mail" value={email} onChangeText={setEmail} textContentType='emailAddress'></Input>
         <Input label="Username" value={username} onChangeText={setUsername}></Input>
         <Input label="Data de Nascimento" value={birthdate} onChangeText={setBirthdate} textContentType='birthdateDay'></Input>
@@ -44,10 +75,7 @@ export default function SignupScreen({onSignup}: ISignupScreen) {
             navigation.navigate("index")
           }} />
           <View  style={{ width: "2%" }}/>
-          <Button content="cadastrar" type='primary' style={{ width: "49%" }} onPress={() => onSignup({
-            email,
-            password
-          })} />
+          <Button content="cadastrar" type='primary' style={{ width: "49%" }} onPress={() => onSignup()} />
         </ButtonContainer>
       </TextContainer>
     </Container>

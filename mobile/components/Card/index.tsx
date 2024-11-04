@@ -3,6 +3,7 @@ import { Container, CardTitle, CardText, CardImage, Rating } from './styles'
 import { ImageSourcePropType, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { DarkTheme } from '@/constants/Colors';
+import SampleImage from '@/assets/images/sample.png'
 
 interface IButton {
     image: ImageSourcePropType;
@@ -29,7 +30,7 @@ function Card({ image, title, subtitle, rate, onPress }: IButton) {
 
   return (
     <Container onPress={onPress}>
-      <CardImage source={image} resizeMode='cover'></CardImage>
+      <CardImage source={image || SampleImage} resizeMode='cover'></CardImage>
       <View >
         <CardTitle style={{ fontSize: 16 }}>{title}</CardTitle>
         <CardText style={{ fontSize: 16 }}>Tipo: {subtitle}</CardText>

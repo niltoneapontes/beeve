@@ -40,6 +40,27 @@ export class UserService {
     }
   }
 
+  async login({
+    email,
+    password,
+  }: Pick<UserDTO, 'email' | 'password'>): Promise<User> {
+    try {
+      const foundUserByEmail = await this.repository.findUserByEmail(email);
+
+      if (!foundUserByEmail) {
+        throw Error('E-mail não cadastrado');
+      }
+
+      if (password != foundUserByEmail.password) {
+        throw Error('E-mail ou senha incorretos');
+      }
+
+      return foundUserByEmail;
+    } catch (error) {
+      throw Error(error);
+    }
+  }
+
   async editUser({
     id,
     birthdate,

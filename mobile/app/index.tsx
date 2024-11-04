@@ -7,11 +7,29 @@ import Paragraph from '@/components/Paragraph'
 import Button from '@/components/Button'
 import Input from '@/components/Input'
 import { useNavigation } from 'expo-router'
+import { api, handleRequestError } from '@/api'
+import axios from 'axios'
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const navigation = useNavigation<any>()
+
+  const onSignin = async () => {
+    try {
+      await api.post('/users/login', {
+        email: email,
+        password: password
+      })
+
+      setEmail("")
+      setPassword("")
+
+      navigation.navigate('(tabs)')
+    } catch(error) {
+      handleRequestError(error)
+    }
+  }
 
   return (
     <Container>
@@ -26,13 +44,7 @@ export default function LoginScreen() {
         <Input label="E-mail" value={email} onChangeText={setEmail} autoCapitalize='none' textContentType='emailAddress'></Input>
         <Input label="Password" value={password} onChangeText={setPassword} textContentType='password' secureTextEntry></Input>
         <ButtonContainer>
-          <Button content="login" type='primary' style={{ width: "100%" }} onPress={() => 
-            {
-              if(email.toLocaleLowerCase() === "niltoneapontes@gmail.com" && password === "123456") {
-                navigation.navigate("(tabs)")
-              }
-            }
-          } />
+          <Button content="login" type='primary' style={{ width: "100%" }} onPress={() => onSignin()} />
           <Button content="cadastro" type='white' style={{ width: "100%", marginTop: 8}} onPress={() => {
             navigation.navigate('signup')
           }} />

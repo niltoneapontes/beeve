@@ -1,38 +1,45 @@
 import Card from "@/components/Card";
-import { FlatList, useColorScheme, View } from "react-native";
+import { FlatList, ImageSourcePropType, useColorScheme, View } from "react-native";
 import Background from '@/assets/images/background.png'
 import Title from "@/components/Title";
 import Paragraph from "@/components/Paragraph";
 import { Container } from "../styles/homeStyle";
 import { DarkTheme, DefaultTheme } from "@/constants/Colors";
 import FloatingButton from "@/components/FloatingButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigation } from "expo-router";
+import { api, handleRequestError } from "@/api";
+import { ActivityIndicator } from "react-native-paper";
+
+export interface Beverage {
+  image: ImageSourcePropType;
+  name: string;
+  description: string;
+  rating: number;
+}
 
 export default function HomeScreen() {
   const colorScheme = useColorScheme()
   const navigation = useNavigation<any>()
 
-  const [data, setData] = useState([
-    {
-      image: Background,
-      title: "Heineken",
-      subtitle: "Descrição",
-      rate: 4,
-    },
-    {
-      image: Background,
-      title: "Chá de Camomila",
-      subtitle: "Descrição",
-      rate: 2,
-    },
-    {
-      image: Background,
-      title: "Café 3 Corações",
-      subtitle: "Descrição",
-      rate: 5,
+  const [data, setData] = useState<Beverage[]>([] as Beverage[])
+  
+  useEffect(() => {
+    const getBeverages = async () => {
+      try {
+        const response = await api.get('/beverages', {
+          params: {
+            userId: 1
+          }
+        })
+        setData(response.data)
+      } catch(error) {
+        handleRequestError(error)
+      }
     }
-  ])
+
+    getBeverages()
+  }, [])
 
   return (
     <Container>
@@ -45,6 +52,8 @@ export default function HomeScreen() {
           backgroundColor: colorScheme === 'dark' ? DarkTheme.backgroundColor : DefaultTheme.backgroundColor
         }}
         data={data}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={<ActivityIndicator />}
         ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
         ListFooterComponent={() => <View style={{ height: 88 }} />}
         keyExtractor={() => Math.random().toString()}
@@ -53,9 +62,9 @@ export default function HomeScreen() {
           <Card 
           key={Math.random().toString()} 
           image={item.image} 
-          title={item.title} 
-          subtitle={item.subtitle} 
-          rate={item.rate} 
+          title={item.name} 
+          subtitle={item.description} 
+          rate={item.rating} 
           onPress={() => {
             navigation.navigate("beverage", {})
           }} />

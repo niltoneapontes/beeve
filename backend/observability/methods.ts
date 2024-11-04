@@ -29,6 +29,12 @@ export class observabilityMethods {
     buckets: [1, 2, 5, 10, 20, 30, 40, 50, 500, 1000, 2000, 5000, 10000],
   });
 
+  static usersPostLoginResponseTime = new Histogram({
+    name: 'http_response_time_login_users',
+    help: 'Duration of Users Login route requests in seconds',
+    buckets: [1, 2, 5, 10, 20, 30, 40, 50, 500, 1000, 2000, 5000, 10000],
+  });
+
   static usersPutResponseTime = new Histogram({
     name: 'http_response_time_put_users',
     help: 'Duration of Users Put route requests in seconds',
