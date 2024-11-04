@@ -3,7 +3,11 @@ import React, { useState } from 'react'
 import { Searchbar } from 'react-native-paper'
 import { useTheme } from 'styled-components/native';
 
-export default function BeeveSearchBar() {
+interface IBeeveSearchBar {
+  onSearch: (search: string) => void;
+}
+
+export default function BeeveSearchBar({onSearch}: IBeeveSearchBar) {
   const [searchQuery, setSearchQuery] = useState('');
   const theme = useTheme();
   const colorScheme = useColorScheme()
@@ -18,6 +22,8 @@ export default function BeeveSearchBar() {
         iconColor={colorScheme === 'dark' ? theme.white : theme.primary}
         rippleColor={colorScheme === 'dark' ? theme.white : theme.primary}
         inputStyle={{ color: colorScheme === 'dark' ? theme.white : theme.black}}
+        onIconPress={() => onSearch(searchQuery)}
+        onSubmitEditing={() => onSearch(searchQuery)}
         placeholderTextColor={theme.gray}
         style={{
             width: "100%",

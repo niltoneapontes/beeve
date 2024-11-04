@@ -41,11 +41,26 @@ export default function TabTwoScreen() {
     getBeverages()
   }, [])
 
+  const filterBeverages = async (search: string) => {
+    try {
+      const response = await api.get('/beverages', {
+        params: {
+          userId: user?.id || 0
+        }
+      })
+
+      const filteredBeverages = response.data.filter((beverage: Beverage) => beverage.name.toLowerCase().includes(search.toLowerCase()))
+      setData(filteredBeverages)
+    } catch(error) {
+      handleRequestError(error)
+    }
+  }
+
   return (
     <Container>
       <Title content="Pesquisa" />
       <Paragraph content="Encontre aqui uma de suas avaliações" style={{ marginVertical: 8 }}/>
-      <BeeveSearchBar />
+      <BeeveSearchBar onSearch={filterBeverages}/>
       <FlatList
         style={{
           width: "100%",

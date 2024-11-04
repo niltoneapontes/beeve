@@ -7,7 +7,7 @@ import Button from '@/components/Button'
 import { useTheme } from '@react-navigation/native'
 import Input from '@/components/Input'
 import { useNavigation } from 'expo-router'
-import { Selector } from '@/components/Selector'
+import { data, Selector } from '@/components/Selector'
 import Rating from '@/components/Rating'
 import Spacer from '@/components/Spacer'
 import { IndexPath } from '@ui-kitten/components'
@@ -35,7 +35,7 @@ export default function ProductDetailScreen() {
         description: description,
         name: name,
         rating: rating,
-        type: type.toString(),
+        type: data[type.row],
         userId: user?.id || 0
       })
 
