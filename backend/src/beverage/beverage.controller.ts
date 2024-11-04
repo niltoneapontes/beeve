@@ -5,7 +5,6 @@ import {
   FileTypeValidator,
   Get,
   HttpStatus,
-  MaxFileSizeValidator,
   ParseFilePipe,
   Post,
   Put,
@@ -23,6 +22,7 @@ import { Response } from 'express';
 import { BeverageService } from './beverage.service';
 import { observabilityMethods } from 'observability/methods';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { randomUUID } from 'crypto';
 
 @Controller('beverages')
 export class BeverageController {
@@ -57,7 +57,20 @@ export class BeverageController {
     file: Express.Multer.File,
     @Res() res: Response,
   ) {
-    console.log(file);
+    try {
+      const newFileName = `${randomUUID().toString()}-${file.originalname.toLowerCase().replaceAll(' ', '')}`;
+      await this.beverageService.uploadImage(newFileName, file.buffer);
+      const url = `https://beeve-beverages.s3.us-east-1.amazonaws.com/${newFileName}`;
+
+      return res.status(HttpStatus.CREATED).json({
+        url: url,
+      });
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: error.message || 'An error has occurred',
+        details: error.stack || error,
+      });
+    }
   }
 
   @Put()
