@@ -6,7 +6,7 @@ import { TextInput, TextInputProps} from 'react-native-paper'
 interface IInput extends TextInputProps {
     label: string;
     value: string;
-    onChangeText: React.Dispatch<React.SetStateAction<string>>;
+    onChangeText: (text: string) => void;
 }
 
 function Input({label, value, onChangeText, ...props}: IInput) {

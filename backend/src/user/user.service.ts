@@ -52,7 +52,11 @@ export class UserService {
         throw Error('E-mail não cadastrado');
       }
 
-      if (!comparePassword(password, foundUserByEmail.password)) {
+      const isPasswordOk = await comparePassword(
+        password,
+        foundUserByEmail.password,
+      );
+      if (!isPasswordOk) {
         throw Error('E-mail ou senha incorretos');
       }
 

@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useState } from 'react'
 import { ButtonContainer, Container, TextContainer } from './styles/beverage'
 import Title from '@/components/Title'
-import { Image, Platform, TouchableOpacity, View } from 'react-native'
+import { Image, Platform, Text, TouchableOpacity, View } from 'react-native'
 import Background from '@/assets/images/background.png'
 import Button from '@/components/Button'
 import { useTheme } from '@react-navigation/native'
@@ -14,16 +14,26 @@ import { Feather } from '@expo/vector-icons'
 import * as ImagePicker from 'expo-image-picker'
 import { api, handleRequestError } from '@/api'
 import { AuthContext } from '@/context/auth'
+import { Formik } from 'formik'
+import * as Yup from 'yup';
+
+interface ISaveProduct {
+  name: string;
+  description: string;
+}
 
 export default function ProductDetailScreen() {
   const theme = useTheme()
   const [image, setImage] = useState<string>("")
-  const [name, setName] = useState<string>("")
-  const [description, setDescription] = useState<string>("")
   const [rating, setRating] = useState<number>(0)
   const [type, setType] = useState<IndexPath>(new IndexPath(0))
 
   const navigation = useNavigation<any>()
+
+  const validationSchema = Yup.object().shape({
+    name: Yup.string().required('Não deixe o nome em branco'),
+    description: Yup.string().required('Não deixe a descrição em branco'),
+  });
 
   const {
     user
@@ -63,7 +73,7 @@ export default function ProductDetailScreen() {
     }
   };
 
-  const onSaveProduct = useCallback(async () => {
+  const onSaveProduct = useCallback(async ({name, description}: ISaveProduct) => {
     try {
       await api.post('/beverages', {
         createdAt: new Date().toISOString(),
@@ -80,29 +90,31 @@ export default function ProductDetailScreen() {
     } catch(error) {
       handleRequestError(error)
     }
-  }, [image, description, name, rating, type, user])
+  }, [image, rating, type, user])
 
   const clearFields = () => {
-    setName("")
-    setDescription("")
     setRating(0)
     setType(new IndexPath(0))
     setImage("")
   }
 
   return (
-    <Container>
+    <Container contentContainerStyle={{
+      alignItems: 'flex-start',
+      justifyContent: 'flex-end'
+    }}>
       {image.length > 0 ? (
         <Image source={{ uri: image }} resizeMode="cover" style={{
           width: "100%",
-          height: "50%"
+          height: 320
         }}/>
       ) : (
         <Image source={Background} resizeMode="cover" style={{
           width: "100%",
-          height: "50%"
+          height: 320
         }}/>
       )}
+      
       <TouchableOpacity style={{
         backgroundColor: theme.colors.primary,
         marginTop: -28,
@@ -115,16 +127,27 @@ export default function ProductDetailScreen() {
       }}>
         <Feather name='upload' size={32} color={theme.colors.card} />
       </TouchableOpacity>
+
+      <Formik initialValues={{        
+        name: '',
+        description: '',
+      }}
+      validationSchema={validationSchema}
+      onSubmit={(values) => {
+        onSaveProduct(values)
+      }}>
+        {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
       <TextContainer>
         <Title content='Avaliação' style={{ marginTop: 24, marginBottom: 8, fontSize: 32 }}/>
-        <Input label="Nome da Bebida" value={name} onChangeText={setName}></Input>
+        <Input label="Nome da Bebida" value={values.name} onChangeText={handleChange('name')} onBlur={handleBlur('name')}></Input>
+        {errors.name && touched.name && <Text style={{ color: 'red', marginTop: -4, marginLeft: 2}}>{errors.name}</Text>}
         <Input 
         label="Descrição" 
-        value={description} 
-        onChangeText={setDescription}
+        value={values.description} onChangeText={handleChange('description')} onBlur={handleBlur('description')}
         multiline
         numberOfLines={6}
         ></Input>
+        {errors.description && touched.description && <Text style={{ color: 'red', marginTop: -4, marginLeft: 2}}>{errors.description}</Text>}
         <Selector selectedIndex={type} setSelectedIndex={setType}/>
         <Rating rating={rating} setRating={setRating}/>
         <ButtonContainer>
@@ -132,9 +155,11 @@ export default function ProductDetailScreen() {
             navigation.navigate("home")
           }} />
           <View  style={{ width: "2%" }}/>
-          <Button content="cadastrar" type='primary' style={{ width: "49%" }} onPress={() => onSaveProduct()} />
+          <Button content="cadastrar" type='primary' style={{ width: "49%" }} onPress={handleSubmit} />
         </ButtonContainer>
       </TextContainer>
+        )}
+        </Formik>
     </Container>
   )
 }
