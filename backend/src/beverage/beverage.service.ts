@@ -23,6 +23,7 @@ export class BeverageService {
     rating,
     type,
     userId,
+    image,
   }: BeverageDTO): Promise<Beverage> {
     try {
       const createdBeverage = await this.repository.create(
@@ -32,6 +33,7 @@ export class BeverageService {
         type,
         rating,
         userId,
+        image,
       );
 
       return createdBeverage;
@@ -48,6 +50,7 @@ export class BeverageService {
     rating,
     type,
     userId,
+    image,
   }: BeverageDTO): Promise<Beverage> {
     try {
       const edittedBeverage = await this.repository.edit(
@@ -58,6 +61,7 @@ export class BeverageService {
         type,
         rating,
         userId,
+        image,
       );
 
       return edittedBeverage;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { ButtonContainer, Container, TextContainer } from './styles/beverage'
 import Title from '@/components/Title'
 import { Image, Platform, TouchableOpacity, View } from 'react-native'
@@ -7,18 +7,15 @@ import Button from '@/components/Button'
 import { useTheme } from '@react-navigation/native'
 import Input from '@/components/Input'
 import { useNavigation } from 'expo-router'
-import { Selector } from '@/components/Selector'
+import { data, Selector } from '@/components/Selector'
 import Rating from '@/components/Rating'
 import { IndexPath } from '@ui-kitten/components'
 import { Feather } from '@expo/vector-icons'
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from 'expo-image-picker'
 import { api, handleRequestError } from '@/api'
+import { AuthContext } from '@/context/auth'
 
-interface IProductDetailScreen {
-  onSaveProduct: React.Dispatch<React.SetStateAction<any>>
-}
-
-export default function ProductDetailScreen({onSaveProduct}: IProductDetailScreen) {
+export default function ProductDetailScreen() {
   const theme = useTheme()
   const [image, setImage] = useState<string>("")
   const [name, setName] = useState<string>("")
@@ -62,6 +59,37 @@ export default function ProductDetailScreen({onSaveProduct}: IProductDetailScree
 
   const navigation = useNavigation<any>()
 
+  const {
+    user
+  } = useContext(AuthContext);
+
+
+  const onSaveProduct = async () => {
+    try {
+      await api.post('/beverages', {
+        createdAt: new Date().toISOString(),
+        description: description,
+        name: name,
+        rating: rating,
+        type: data[type.row],
+        userId: user?.id || 0,
+        image: image
+      })
+
+      clearFields()
+      navigation.navigate('(tabs)')
+    } catch(error) {
+      handleRequestError(error)
+    }
+  }
+
+  const clearFields = () => {
+    setName("")
+    setDescription("")
+    setRating(0)
+    setType(new IndexPath(0))
+  }
+
   return (
     <Container>
       {image.length > 0 ? (
@@ -104,13 +132,7 @@ export default function ProductDetailScreen({onSaveProduct}: IProductDetailScree
             navigation.navigate("home")
           }} />
           <View  style={{ width: "2%" }}/>
-          <Button content="cadastrar" type='primary' style={{ width: "49%" }} onPress={() => onSaveProduct({
-            name,
-            description,
-            type,
-            rating,
-            image
-          })} />
+          <Button content="cadastrar" type='primary' style={{ width: "49%" }} onPress={() => onSaveProduct()} />
         </ButtonContainer>
       </TextContainer>
     </Container>

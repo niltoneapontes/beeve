@@ -18,6 +18,7 @@ import { AuthContext } from "@/context/auth";
 SplashScreen.preventAutoHideAsync();
 
 export interface IUser {
+  id?: number;
   birthdate: string;
   createdAt: string;
   email: string;

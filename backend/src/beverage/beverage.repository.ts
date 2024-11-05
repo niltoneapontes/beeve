@@ -8,6 +8,7 @@ export abstract class BeveragesRepository {
     type: string,
     rating: number,
     userId: number,
+    image: string,
   ): Promise<Beverage>;
 
   abstract edit(
@@ -18,6 +19,7 @@ export abstract class BeveragesRepository {
     type: string,
     rating: number,
     userId: number,
+    image: string,
   ): Promise<Beverage>;
 
   abstract findAllByUser(userId: number): Promise<Beverage[]>;

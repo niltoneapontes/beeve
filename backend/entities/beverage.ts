@@ -6,4 +6,5 @@ export interface Beverage {
   type: string;
   rating: number;
   userId: number;
+  image: string;
 }

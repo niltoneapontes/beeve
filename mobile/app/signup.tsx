@@ -42,6 +42,7 @@ export default function SignupScreen() {
         username: username
       })
 
+      clearFields()
       navigation.navigate('(tabs)')
     } catch(error) {
       handleRequestError(error)
