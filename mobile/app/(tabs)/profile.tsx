@@ -14,6 +14,7 @@ import { AuthContext } from '@/context/auth';
 import PickImage from '@/components/PickImage';
 import LocalStorage from '@/utilities/localstorage';
 import { Modal } from 'react-native-paper';
+import { useNavigation } from 'expo-router';
 
 export default function TabThreeScreen() {
   const [showModal, setShowModal] = useState(false);
@@ -22,6 +23,8 @@ export default function TabThreeScreen() {
   const {
     user
   } = useContext(AuthContext);
+
+  const navigation = useNavigation<any>()
 
   const birthYear = user?.birthdate.split("/")[2] || '2000'
   const age = new Date().getFullYear() - parseInt(birthYear)
@@ -89,7 +92,9 @@ export default function TabThreeScreen() {
         <Paragraph content={user?.email || "Sem e-mail"} />
         <Paragraph content={`${age} anos` || "-"} />
         <Spacer />
-        <Button content="editar" type="primary" onPress={() => {}}  style={{ marginTop: 40, marginBottom: 32, height: 56, width: '100%' }}/>
+        <Button content="editar" type="primary" onPress={() => {
+          navigation.navigate("signup")
+        }}  style={{ marginTop: 40, marginBottom: 32, height: 56, width: '100%' }}/>
       </Container>
       <Modal visible={showModal}  onDismiss={() => setShowModal(false)} contentContainerStyle={{
         backgroundColor: 'white',

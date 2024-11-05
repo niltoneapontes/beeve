@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { ButtonContainer, Container, TextContainer } from './styles/signupStyle'
 import Title from '@/components/Title'
 import { Image, Text, View } from 'react-native'
@@ -10,9 +10,13 @@ import { api, handleRequestError } from '@/api'
 import { Formik } from 'formik'
 import * as Yup from 'yup';
 import { IUser } from './_layout'
+import { useRoute } from '@react-navigation/native'
+import { AuthContext } from '@/context/auth'
 
 
 export default function SignupScreen() {
+  const { user, login } = useContext(AuthContext)
+
   const validationSchema = Yup.object().shape({
     email: Yup.string()
       .email('Digite um e-mail válido')
@@ -40,16 +44,32 @@ export default function SignupScreen() {
     username
   }: IUser) => {
     try {
-      await api.post('/users', {
-        birthdate: birthdate,
-        createdAt: new Date().toISOString(),
-        email: email,
-        name: name,
-        password: password,
-        socialAccountId: socialAccountId,
-        socialAccountProvider: socialAccountProvider,
-        username: username
-      })
+      if(user) {
+        const response = await api.put('/users', {
+          id: user.id,
+          birthdate: birthdate,
+          createdAt: new Date().toISOString(),
+          email: email,
+          name: name,
+          password: password,
+          socialAccountId: socialAccountId,
+          socialAccountProvider: socialAccountProvider,
+          username: username
+        })
+
+        login(response.data)
+      } else {
+        await api.post('/users', {
+          birthdate: birthdate,
+          createdAt: new Date().toISOString(),
+          email: email,
+          name: name,
+          password: password,
+          socialAccountId: socialAccountId,
+          socialAccountProvider: socialAccountProvider,
+          username: username
+        })
+      }
 
       navigation.navigate('(tabs)')
     } catch(error) {
@@ -63,14 +83,14 @@ export default function SignupScreen() {
       justifyContent: 'flex-end'
     }}>
       <Formik initialValues={{        
-        birthdate: '',
-        email: '',
-        name: '',
+        birthdate: user?.birthdate || '',
+        email: user?.email || '',
+        name: user?.name || '',
         password: '',
         passwordConfirmation: '',
-        socialAccountId: null,
-        socialAccountProvider: null,
-        username: '',
+        socialAccountId: user?.socialAccountId || null,
+        socialAccountProvider: user?.socialAccountProvider || null,
+        username: user?.username || '',
       }}
       validationSchema={validationSchema}
       onSubmit={(values) => {
@@ -84,18 +104,25 @@ export default function SignupScreen() {
         }}/>
         <TextContainer>
           <Title content='Cadastro' style={{ marginTop: 24, marginBottom: 8, fontSize: 32 }}/>
+          
           <Input label="Nome Completo" value={values.name} onChangeText={handleChange('name')} onBlur={handleBlur('name')}></Input>
           {errors.name && touched.name && <Text style={{ color: 'red', marginTop: -4, marginLeft: 2}}>{errors.name}</Text>}
+          
           <Input label="E-mail" value={values.email} onChangeText={handleChange('email')} onBlur={handleBlur('email')} textContentType='emailAddress'></Input>
           {errors.email && touched.email && <Text style={{ color: 'red', marginTop: -4, marginLeft: 2 }}>{errors.email}</Text>}
+          
           <Input label="Username" value={values.username} onChangeText={handleChange('username')} onBlur={handleBlur('username')}></Input>
           {errors.username && touched.username && <Text style={{ color: 'red', marginTop: -4, marginLeft: 2 }}>{errors.username}</Text>}
+          
           <Input label="Data de Nascimento" value={values.birthdate} onChangeText={handleChange('birthdate')} onBlur={handleBlur('name')} textContentType='birthdateDay'></Input>
           {errors.birthdate && touched.birthdate && <Text style={{ color: 'red', marginTop: -4, marginLeft: 2 }}>{errors.birthdate}</Text>}
+          
           <Input label="Senha" value={values.password} onChangeText={handleChange('password')} onBlur={handleBlur('password')} textContentType='password' secureTextEntry></Input>
           {errors.password && touched.password && <Text style={{ color: 'red', marginTop: -4, marginLeft: 2 }}>{errors.password}</Text>}
+          
           <Input label="Confirmação da Senha" value={values.passwordConfirmation} onChangeText={handleChange('passwordConfirmation')}  textContentType='password' secureTextEntry></Input>
           {errors.passwordConfirmation && touched.passwordConfirmation && <Text style={{ color: 'red', marginTop: -4, marginLeft: 2 }}>{errors.passwordConfirmation}</Text>}
+          
           <ButtonContainer>
             <Button content="voltar" type='white'  style={{ width: "49%" }} onPress={() => {
               navigation.navigate("index")

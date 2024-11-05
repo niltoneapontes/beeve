@@ -91,7 +91,7 @@ export default function TabTwoScreen() {
           key={Math.random().toString()} 
           image={item.image} 
           title={item.name} 
-          subtitle={item.description} 
+          subtitle={item.type} 
           rate={item.rating} 
           onPress={() => {
             navigation.navigate("beverage", {})

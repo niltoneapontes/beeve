@@ -1,10 +1,10 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { ButtonContainer, Container, TextContainer } from './styles/beverage'
 import Title from '@/components/Title'
 import { Image, Platform, Text, TouchableOpacity, View } from 'react-native'
 import Background from '@/assets/images/background.png'
 import Button from '@/components/Button'
-import { useTheme } from '@react-navigation/native'
+import { useRoute, useTheme } from '@react-navigation/native'
 import Input from '@/components/Input'
 import { useNavigation } from 'expo-router'
 import { data, Selector } from '@/components/Selector'
@@ -16,7 +16,6 @@ import { api, handleRequestError } from '@/api'
 import { AuthContext } from '@/context/auth'
 import { Formik } from 'formik'
 import * as Yup from 'yup';
-import PickImage from '@/components/PickImage'
 
 interface ISaveProduct {
   name: string;
@@ -30,6 +29,18 @@ export default function ProductDetailScreen() {
   const [type, setType] = useState<IndexPath>(new IndexPath(0))
 
   const navigation = useNavigation<any>()
+
+  const route = useRoute();
+  // @ts-ignore
+  const { beverage } = route.params || {};
+
+  useEffect(() => {
+    if(beverage) {
+      setImage(beverage?.image)
+      setRating(beverage?.rating)
+      setType(new IndexPath(data.indexOf(beverage?.type)))
+    }
+  }, [beverage])
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Não deixe o nome em branco'),
@@ -76,15 +87,28 @@ export default function ProductDetailScreen() {
 
   const onSaveProduct = useCallback(async ({name, description}: ISaveProduct) => {
     try {
-      await api.post('/beverages', {
-        createdAt: new Date().toISOString(),
-        description: description,
-        name: name,
-        rating: rating,
-        type: data[type.row],
-        userId: user?.id || 0,
-        image: image
-      })
+      if(beverage) {
+        await api.put('/beverages', {
+          id: beverage.id,
+          createdAt: new Date().toISOString(),
+          description: description,
+          name: name,
+          rating: rating,
+          type: data[type.row],
+          userId: user?.id || 0,
+          image: image
+        })
+      } else {
+        await api.post('/beverages', {
+          createdAt: new Date().toISOString(),
+          description: description,
+          name: name,
+          rating: rating,
+          type: data[type.row],
+          userId: user?.id || 0,
+          image: image
+        })
+      }
 
       clearFields()
       navigation.navigate('(tabs)')
@@ -116,18 +140,22 @@ export default function ProductDetailScreen() {
         }}/>
       )}
       
-      <PickImage onPickImage={() => pickImage()} iconName='upload' style={{
-                backgroundColor: theme.colors.primary,
-                marginTop: -32,
-                alignSelf: 'flex-end',
-                marginRight: 24,
-                padding: 24,
-                borderRadius: 40
-      }}/>
+      <TouchableOpacity style={{
+        backgroundColor: theme.colors.primary,
+        marginTop: -28,
+        alignSelf: 'flex-end',
+        marginRight: 16,
+        padding: 12,
+        borderRadius: 28
+      }} onPress={() => {
+        pickImage()
+      }}>
+        <Feather name='upload' size={32} color={theme.colors.card} />
+      </TouchableOpacity>
 
       <Formik initialValues={{        
-        name: '',
-        description: '',
+        name: beverage?.name || '',
+        description: beverage?.description || '',
       }}
       validationSchema={validationSchema}
       onSubmit={(values) => {
