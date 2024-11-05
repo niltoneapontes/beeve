@@ -15,7 +15,7 @@ import { AuthContext } from '@/context/auth'
 
 
 export default function SignupScreen() {
-  const { user, login } = useContext(AuthContext)
+  const { user, token, login } = useContext(AuthContext)
 
   const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -55,9 +55,13 @@ export default function SignupScreen() {
           socialAccountId: socialAccountId,
           socialAccountProvider: socialAccountProvider,
           username: username
+        }, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
         })
 
-        login(response.data)
+        login(response.data, response.data.access_token)
       } else {
         await api.post('/users', {
           birthdate: birthdate,
@@ -125,7 +129,7 @@ export default function SignupScreen() {
           
           <ButtonContainer>
             <Button content="voltar" type='white'  style={{ width: "49%" }} onPress={() => {
-              navigation.navigate("index")
+              navigation.goBack()
             }} />
             <View  style={{ width: "2%" }}/>
             <Button content="cadastrar" type='primary' style={{ width: "49%" }} onPress={handleSubmit} />

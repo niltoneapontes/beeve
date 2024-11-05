@@ -23,7 +23,8 @@ export default function TabTwoScreen() {
   const [refreshing, setRefreshing] = useState(false);
 
   const {
-    user
+    user,
+    token
   } = useContext(AuthContext);
   
   const getBeverages = async () => {
@@ -31,6 +32,9 @@ export default function TabTwoScreen() {
       const response = await api.get('/beverages', {
         params: {
           userId: user?.id || 0
+        },
+        headers: {
+          'Authorization': `Bearer ${token}`
         }
       })
       setData(response.data)
@@ -48,6 +52,9 @@ export default function TabTwoScreen() {
       const response = await api.get('/beverages', {
         params: {
           userId: user?.id || 0
+        },
+        headers: {
+          'Authorization': `Bearer ${token}`
         }
       })
 

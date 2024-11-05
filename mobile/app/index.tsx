@@ -42,7 +42,7 @@ export default function LoginScreen() {
       const loggedUser = response.data
 
       if(login) {
-        login(loggedUser)
+        login(loggedUser, loggedUser.access_token)
       }
 
       await LocalStorage.storeData("@eeve/user", JSON.stringify(loggedUser))

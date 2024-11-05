@@ -4,23 +4,29 @@ import { createContext, useEffect, useState } from "react";
 
 interface IAuthContext { 
   user: IUser | null;
+  token: string | null;
   loading: boolean;
-  login: (userData: IUser) => void;
+  login: (userData: IUser, token: string) => void;
   logout: () => void 
   }
 
-export const AuthContext = createContext<IAuthContext>({user: null, loading: true, login: () => {}, logout: () => {}});
+export const AuthContext = createContext<IAuthContext>({user: null, token: null, loading: true, login: () => {}, logout: () => {}});
 
 export const AuthProvider = ({ children }: React.PropsWithChildren) => {
   const [user, setUser] = useState<IUser | null>(null);
+  const [token, setToken] = useState<string | null>(null)
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadUser = async () => {
       try {
         const storedUser = await LocalStorage.getData('@eeve/user');
+        const storedToken = await LocalStorage.getData('@eeve/token');
         if (storedUser) {
           setUser(JSON.parse(storedUser));
+        }
+        if (storedToken) {
+          setToken(storedToken)
         }
       } catch (error) {
         console.error('Failed to load user data from AsyncStorage:', error);
@@ -32,11 +38,12 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
     loadUser();
   }, []);
 
-  // Login function to save user data
-  const login = async (userData: IUser) => {
+  const login = async (userData: IUser, token: string) => {
     try {
       await LocalStorage.storeData('@eeve/user', JSON.stringify(userData));
+      await LocalStorage.storeData('@eeve/token', token);
       setUser(userData);
+      setToken(token)
     } catch (error) {
       console.error('Failed to save user data to AsyncStorage:', error);
     }
@@ -46,6 +53,7 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
   const logout = async () => {
     try {
       await LocalStorage.removeData('@eeve/user');
+      await LocalStorage.removeData('@eeve/token');
       setUser(null);
     } catch (error) {
       console.error('Failed to remove user data from AsyncStorage:', error);
@@ -53,7 +61,7 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

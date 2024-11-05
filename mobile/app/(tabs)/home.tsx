@@ -28,7 +28,8 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
 
   const {
-    user
+    user,
+    token
   } = useContext(AuthContext);
   
   const getBeverages = async () => {
@@ -36,6 +37,9 @@ export default function HomeScreen() {
       const response = await api.get('/beverages', {
         params: {
           userId: user?.id || 0
+        },
+        headers: {
+          'Authorization': `Bearer ${token}`
         }
       })
       setData(response.data)
@@ -45,7 +49,11 @@ export default function HomeScreen() {
   }
 
   useEffect(() => {
-    getBeverages()
+    setRefreshing(true)
+    setTimeout(() => {
+      getBeverages()
+      setRefreshing(false)
+    }, 2000)
   }, [])
 
   const onRefresh = useCallback(() => {
@@ -68,7 +76,7 @@ export default function HomeScreen() {
         }}
         data={data}
         showsVerticalScrollIndicator={false}
-        ListEmptyComponent={<EmptyList />}
+        ListEmptyComponent={refreshing ? null : <EmptyList />}
         ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
         ListFooterComponent={() => <View style={{ height: 88 }} />}
         keyExtractor={() => Math.random().toString()}
