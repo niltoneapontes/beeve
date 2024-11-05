@@ -11,6 +11,7 @@ import {
   Query,
   Res,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import {
@@ -23,11 +24,13 @@ import { BeverageService } from './beverage.service';
 import { observabilityMethods } from 'observability/methods';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { randomUUID } from 'crypto';
+import { AuthGuard } from 'auth/auth.guard';
 
 @Controller('beverages')
 export class BeverageController {
   constructor(private beverageService: BeverageService) {}
 
+  @UseGuards(AuthGuard)
   @Post()
   async createBeverage(@Body() body: BeverageDTO, @Res() res: Response) {
     const end = observabilityMethods.beveragesPostResponseTime.startTimer();
@@ -46,6 +49,7 @@ export class BeverageController {
     }
   }
 
+  @UseGuards(AuthGuard)
   @Post('/image')
   @UseInterceptors(FileInterceptor('file'))
   async uploadImage(
@@ -73,6 +77,7 @@ export class BeverageController {
     }
   }
 
+  @UseGuards(AuthGuard)
   @Put()
   async editBeverage(@Body() body: BeverageDTO, @Res() res: Response) {
     const end = observabilityMethods.beveragesPutResponseTime.startTimer();
@@ -91,6 +96,7 @@ export class BeverageController {
     }
   }
 
+  @UseGuards(AuthGuard)
   @Get()
   async getBeverages(@Query() query: BeverageQueryDTO, @Res() res: Response) {
     const end = observabilityMethods.beveragesGetResponseTime.startTimer();
@@ -110,6 +116,7 @@ export class BeverageController {
     }
   }
 
+  @UseGuards(AuthGuard)
   @Delete()
   async deleteBeverages(
     @Query() query: BeverageDeleteQueryDTO,
