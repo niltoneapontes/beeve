@@ -1,84 +1,112 @@
 import React, { useState } from 'react'
 import { ButtonContainer, Container, TextContainer } from './styles/signupStyle'
 import Title from '@/components/Title'
-import { Image, View } from 'react-native'
+import { Image, Text, View } from 'react-native'
 import Background from '@/assets/images/background.png'
-import Paragraph from '@/components/Paragraph'
 import Button from '@/components/Button'
-import { useTheme } from '@react-navigation/native'
-import { TextInput } from 'react-native-paper'
-import { DarkTheme } from '@/constants/Colors'
 import Input from '@/components/Input'
-import { IUser } from './_layout'
 import { useNavigation } from 'expo-router'
 import { api, handleRequestError } from '@/api'
-import axios from 'axios'
+import { Formik } from 'formik'
+import * as Yup from 'yup';
+import { IUser } from './_layout'
+
 
 export default function SignupScreen() {
-  const theme = useTheme()
-  const [fullname, setFullname] = useState("")
-  const [email, setEmail] = useState("")
-  const [username, setUsername] = useState("")
-  const [birthdate, setBirthdate] = useState("")
-  const [password, setPassword] = useState("")
-  const [passwordConfirmation, setPasswordConfirmation] = useState("")
+  const validationSchema = Yup.object().shape({
+    email: Yup.string()
+      .email('Digite um e-mail válido')
+      .required('O e-mail é obrigatório'),
+    password: Yup.string()
+      .min(6, 'A senha deve ter no mínimo 6 caracteres')
+      .required('A senha é obrigatória'),
+    passwordConfirmation: Yup.string()
+      .oneOf([Yup.ref('password')], 'As senhas devem conferir')
+      .required('Por favor confirme a senha'),
+    name: Yup.string().required('Não deixe o nome em branco'),
+    username: Yup.string().required('Não deixe o nome em branco'),
+    birthdate: Yup.string().required('Data de nascimento é necessária')
+  });
 
   const navigation = useNavigation<any>()
 
-  const onSignup = async () => {
-    if(password != passwordConfirmation) {
-      return
-    }
-
+  const onSignup = async ({    
+    birthdate,
+    email,
+    name,
+    password,
+    socialAccountId,
+    socialAccountProvider,
+    username
+  }: IUser) => {
     try {
       await api.post('/users', {
         birthdate: birthdate,
         createdAt: new Date().toISOString(),
         email: email,
-        name: fullname,
+        name: name,
         password: password,
-        socialAccountId: null,
-        socialAccountProvider: null,
+        socialAccountId: socialAccountId,
+        socialAccountProvider: socialAccountProvider,
         username: username
       })
 
-      clearFields()
       navigation.navigate('(tabs)')
     } catch(error) {
       handleRequestError(error)
     }
   }
 
-  const clearFields = () => {
-    setFullname("")
-    setEmail("")
-    setUsername("")
-    setBirthdate("")
-    setPassword("")
-    setPasswordConfirmation("")
-  }
-
   return (
-    <Container>
-      <Image source={Background} resizeMode="cover" style={{
-        width: "100%",
-      }}/>
-      <TextContainer>
-        <Title content='Cadastro' style={{ marginTop: 24, marginBottom: 8, fontSize: 32 }}/>
-        <Input label="Nome Completo" value={fullname} onChangeText={setFullname}></Input>
-        <Input label="E-mail" value={email} onChangeText={setEmail} textContentType='emailAddress'></Input>
-        <Input label="Username" value={username} onChangeText={setUsername}></Input>
-        <Input label="Data de Nascimento" value={birthdate} onChangeText={setBirthdate} textContentType='birthdateDay'></Input>
-        <Input label="Senha" value={password} onChangeText={setPassword} textContentType='password' secureTextEntry></Input>
-        <Input label="Confirmação da Senha" value={passwordConfirmation} onChangeText={setPasswordConfirmation} textContentType='password' secureTextEntry></Input>
-        <ButtonContainer>
-          <Button content="voltar" type='white'  style={{ width: "49%" }} onPress={() => {
-            navigation.navigate("index")
-          }} />
-          <View  style={{ width: "2%" }}/>
-          <Button content="cadastrar" type='primary' style={{ width: "49%" }} onPress={() => onSignup()} />
-        </ButtonContainer>
-      </TextContainer>
+    <Container contentContainerStyle={{
+      alignItems: 'flex-start',
+      justifyContent: 'flex-end'
+    }}>
+      <Formik initialValues={{        
+        birthdate: '',
+        email: '',
+        name: '',
+        password: '',
+        passwordConfirmation: '',
+        socialAccountId: null,
+        socialAccountProvider: null,
+        username: '',
+      }}
+      validationSchema={validationSchema}
+      onSubmit={(values) => {
+        onSignup(values as unknown as IUser)
+      }}>
+        {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+        <>
+        <Image source={Background} resizeMode="cover" style={{
+          width: "100%",
+          height: 320
+        }}/>
+        <TextContainer>
+          <Title content='Cadastro' style={{ marginTop: 24, marginBottom: 8, fontSize: 32 }}/>
+          <Input label="Nome Completo" value={values.name} onChangeText={handleChange('name')} onBlur={handleBlur('name')}></Input>
+          {errors.name && touched.name && <Text style={{ color: 'red', marginTop: -4, marginLeft: 2}}>{errors.name}</Text>}
+          <Input label="E-mail" value={values.email} onChangeText={handleChange('email')} onBlur={handleBlur('email')} textContentType='emailAddress'></Input>
+          {errors.email && touched.email && <Text style={{ color: 'red', marginTop: -4, marginLeft: 2 }}>{errors.email}</Text>}
+          <Input label="Username" value={values.username} onChangeText={handleChange('username')} onBlur={handleBlur('username')}></Input>
+          {errors.username && touched.username && <Text style={{ color: 'red', marginTop: -4, marginLeft: 2 }}>{errors.username}</Text>}
+          <Input label="Data de Nascimento" value={values.birthdate} onChangeText={handleChange('birthdate')} onBlur={handleBlur('name')} textContentType='birthdateDay'></Input>
+          {errors.birthdate && touched.birthdate && <Text style={{ color: 'red', marginTop: -4, marginLeft: 2 }}>{errors.birthdate}</Text>}
+          <Input label="Senha" value={values.password} onChangeText={handleChange('password')} onBlur={handleBlur('password')} textContentType='password' secureTextEntry></Input>
+          {errors.password && touched.password && <Text style={{ color: 'red', marginTop: -4, marginLeft: 2 }}>{errors.password}</Text>}
+          <Input label="Confirmação da Senha" value={values.passwordConfirmation} onChangeText={handleChange('passwordConfirmation')}  textContentType='password' secureTextEntry></Input>
+          {errors.passwordConfirmation && touched.passwordConfirmation && <Text style={{ color: 'red', marginTop: -4, marginLeft: 2 }}>{errors.passwordConfirmation}</Text>}
+          <ButtonContainer>
+            <Button content="voltar" type='white'  style={{ width: "49%" }} onPress={() => {
+              navigation.navigate("index")
+            }} />
+            <View  style={{ width: "2%" }}/>
+            <Button content="cadastrar" type='primary' style={{ width: "49%" }} onPress={handleSubmit} />
+          </ButtonContainer>
+        </TextContainer>
+        </>
+        )}
+      </Formik>
     </Container>
   )
 }

@@ -13,6 +13,7 @@ import BeeveSearchBar from '@/components/SearchBar';
 import { Beverage } from './home';
 import { AuthContext } from '@/context/auth';
 import { api, handleRequestError } from '@/api';
+import EmptyList from '@/components/EmptyList';
 
 export default function TabTwoScreen() {
   const colorScheme = useColorScheme()
@@ -68,6 +69,7 @@ export default function TabTwoScreen() {
           backgroundColor: colorScheme === 'dark' ? DarkTheme.backgroundColor : DefaultTheme.backgroundColor
         }}
         data={data}
+        ListEmptyComponent={<EmptyList />}
         ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
         ListFooterComponent={() => <View style={{ height: 88 }} />}
         keyExtractor={() => Math.random().toString()}

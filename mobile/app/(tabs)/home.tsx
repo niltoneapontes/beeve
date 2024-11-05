@@ -1,6 +1,5 @@
 import Card from "@/components/Card";
-import { FlatList, ImageSourcePropType, useColorScheme, View } from "react-native";
-import Background from '@/assets/images/background.png'
+import { FlatList, useColorScheme, View } from "react-native";
 import Title from "@/components/Title";
 import Paragraph from "@/components/Paragraph";
 import { Container } from "../styles/homeStyle";
@@ -9,8 +8,8 @@ import FloatingButton from "@/components/FloatingButton";
 import { useContext, useEffect, useState } from "react";
 import { useNavigation } from "expo-router";
 import { api, handleRequestError } from "@/api";
-import { ActivityIndicator } from "react-native-paper";
 import { AuthContext } from "@/context/auth";
+import EmptyList from "@/components/EmptyList";
 
 export interface Beverage {
   image: string;
@@ -57,7 +56,7 @@ export default function HomeScreen() {
         }}
         data={data}
         showsVerticalScrollIndicator={false}
-        ListEmptyComponent={<ActivityIndicator />}
+        ListEmptyComponent={<EmptyList />}
         ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
         ListFooterComponent={() => <View style={{ height: 88 }} />}
         keyExtractor={() => Math.random().toString()}
