@@ -12,9 +12,11 @@ import { AuthContext } from "@/context/auth";
 import EmptyList from "@/components/EmptyList";
 
 export interface Beverage {
+  id?: number;
   image: string;
   name: string;
   description: string;
+  type: string;
   rating: number;
 }
 
@@ -79,10 +81,12 @@ export default function HomeScreen() {
           key={Math.random().toString()} 
           image={item.image} 
           title={item.name} 
-          subtitle={item.description} 
+          subtitle={item.type} 
           rate={item.rating} 
           onPress={() => {
-            navigation.navigate("beverage", {})
+            navigation.navigate("beverage" as never, {
+              beverage: item
+            } as never)
           }} />
         )}
       />

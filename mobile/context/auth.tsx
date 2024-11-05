@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
   // Logout function to clear user data
   const logout = async () => {
     try {
-      await LocalStorage.removeData('user');
+      await LocalStorage.removeData('@eeve/user');
       setUser(null);
     } catch (error) {
       console.error('Failed to remove user data from AsyncStorage:', error);
