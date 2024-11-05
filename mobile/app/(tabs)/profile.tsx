@@ -15,6 +15,7 @@ import PickImage from '@/components/PickImage';
 import LocalStorage from '@/utilities/localstorage';
 import { Modal } from 'react-native-paper';
 import { useNavigation } from 'expo-router';
+import Toast from 'react-native-toast-message';
 
 export default function TabThreeScreen() {
   const [showModal, setShowModal] = useState(false);
@@ -37,7 +38,19 @@ export default function TabThreeScreen() {
           setSelectedAvatar(value)
         }
       } catch(error) {
-        console.error(error)
+        Toast.show({
+          type: 'error',
+          text1: 'Oops...',
+          text2: "Não foi possível buscar seu avatar :(",
+          text1Style: {
+            fontSize: 16,
+            fontFamily: 'OpenSans'
+          },
+          text2Style: {
+            fontSize: 16,
+            fontFamily: 'OpenSans'
+          }
+        })
       }
     }
 
@@ -49,7 +62,19 @@ export default function TabThreeScreen() {
       setSelectedAvatar(avatar)
       await LocalStorage.storeData("@eeve/avatar", avatar)
     } catch(error) {
-      console.error(error)
+      Toast.show({
+        type: 'error',
+        text1: 'Oops...',
+        text2: "Não foi possível salvar seu avatar :(",
+        text1Style: {
+          fontSize: 16,
+          fontFamily: 'OpenSans'
+        },
+        text2Style: {
+          fontSize: 16,
+          fontFamily: 'OpenSans'
+        }
+      })
     }
   }
 

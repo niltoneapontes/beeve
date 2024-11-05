@@ -15,6 +15,7 @@ import { ApplicationProvider } from "@ui-kitten/components";
 import { AuthContext, AuthProvider } from "@/context/auth";
 import LocalStorage from "@/utilities/localstorage";
 import { ActivityIndicator } from "react-native-paper";
+import Toast from "react-native-toast-message";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -53,30 +54,33 @@ export default function RootLayout() {
   }
 
   return (
-    <ApplicationProvider {...eva} theme={{...(colorScheme === "dark" ? eva.dark : eva.light), ...themeExtension}}>
-      <AuthProvider>
-      <SafeAreaView
-        style={{
-          flex: 1,
-          width: "100%",
-          backgroundColor:
-            colorScheme === "dark"
-              ? DarkTheme.backgroundColor
-              : DefaultTheme.backgroundColor,
-        }}
-      >
-        <ThemeProvider
-          theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+    <>
+      <ApplicationProvider {...eva} theme={{...(colorScheme === "dark" ? eva.dark : eva.light), ...themeExtension}}>
+        <AuthProvider>
+        <SafeAreaView
+          style={{
+            flex: 1,
+            width: "100%",
+            backgroundColor:
+              colorScheme === "dark"
+                ? DarkTheme.backgroundColor
+                : DefaultTheme.backgroundColor,
+          }}
         >
-            <Stack initialRouteName={"index"}>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="signup" options={{ headerShown: false }} />
-            <Stack.Screen name="beverage" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          </Stack>
-        </ThemeProvider>
-      </SafeAreaView>
-      </AuthProvider>
-    </ApplicationProvider>
+          <ThemeProvider
+            theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+          >
+              <Stack initialRouteName={"index"}>
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+              <Stack.Screen name="signup" options={{ headerShown: false }} />
+              <Stack.Screen name="beverage" options={{ headerShown: false }} />
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            </Stack>
+          </ThemeProvider>
+        </SafeAreaView>
+        </AuthProvider>
+      </ApplicationProvider>
+      <Toast />
+    </>
   );
 }
