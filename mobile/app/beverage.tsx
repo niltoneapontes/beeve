@@ -48,7 +48,8 @@ export default function ProductDetailScreen() {
   });
 
   const {
-    user
+    user,
+    token
   } = useContext(AuthContext);
 
   const pickImage = async () => {
@@ -75,7 +76,8 @@ export default function ProductDetailScreen() {
         const response = await api.post('/beverages/image', formData, {
           headers: {
             "Accept": "application/json",
-            "Content-Type": "multipart/form-data"
+            "Content-Type": "multipart/form-data",
+            'Authorization': `Bearer ${token}`
           }
         });
         setImage(response.data.url)
@@ -97,6 +99,10 @@ export default function ProductDetailScreen() {
           type: data[type.row],
           userId: user?.id || 0,
           image: image
+        }, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
         })
       } else {
         await api.post('/beverages', {
@@ -107,6 +113,10 @@ export default function ProductDetailScreen() {
           type: data[type.row],
           userId: user?.id || 0,
           image: image
+        }, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
         })
       }
 
