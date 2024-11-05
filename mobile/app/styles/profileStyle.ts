@@ -11,6 +11,11 @@ export const Container = styled.View`
     flex: 1;
 `
 
+export const PictureContainer = styled.View`
+    align-self: center;
+    position: relative;
+`
+
 export const Header = styled.View`
     background-color: ${props => props.theme.primary};
     height: 200px;

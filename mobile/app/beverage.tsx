@@ -16,6 +16,7 @@ import { api, handleRequestError } from '@/api'
 import { AuthContext } from '@/context/auth'
 import { Formik } from 'formik'
 import * as Yup from 'yup';
+import PickImage from '@/components/PickImage'
 
 interface ISaveProduct {
   name: string;
@@ -115,18 +116,14 @@ export default function ProductDetailScreen() {
         }}/>
       )}
       
-      <TouchableOpacity style={{
-        backgroundColor: theme.colors.primary,
-        marginTop: -28,
-        alignSelf: 'flex-end',
-        marginRight: 16,
-        padding: 12,
-        borderRadius: 28
-      }} onPress={() => {
-        pickImage()
-      }}>
-        <Feather name='upload' size={32} color={theme.colors.card} />
-      </TouchableOpacity>
+      <PickImage onPickImage={() => pickImage()} iconName='upload' style={{
+                backgroundColor: theme.colors.primary,
+                marginTop: -32,
+                alignSelf: 'flex-end',
+                marginRight: 24,
+                padding: 24,
+                borderRadius: 40
+      }}/>
 
       <Formik initialValues={{        
         name: '',

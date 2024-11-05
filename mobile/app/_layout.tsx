@@ -4,7 +4,7 @@ import * as SplashScreen from "expo-splash-screen";
 import * as eva from "@eva-design/eva";
 import { default as themeExtension} from "@/constants/theme-extension.json";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -12,7 +12,9 @@ import { ThemeProvider } from "styled-components/native";
 import { DarkTheme, DefaultTheme } from "@/constants/Colors";
 import { SafeAreaView } from "react-native";
 import { ApplicationProvider } from "@ui-kitten/components";
-import { AuthContext } from "@/context/auth";
+import { AuthContext, AuthProvider } from "@/context/auth";
+import LocalStorage from "@/utilities/localstorage";
+import { ActivityIndicator } from "react-native-paper";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -31,8 +33,6 @@ export interface IUser {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-
-  const [user, setUser] = useState<IUser>({} as IUser);
 
   const [loaded] = useFonts({
     Raleway: require("../assets/fonts/Raleway-Regular.ttf"),
@@ -54,7 +54,7 @@ export default function RootLayout() {
 
   return (
     <ApplicationProvider {...eva} theme={{...(colorScheme === "dark" ? eva.dark : eva.light), ...themeExtension}}>
-      <AuthContext.Provider value={{user, setUser}}>
+      <AuthProvider>
       <SafeAreaView
         style={{
           flex: 1,
@@ -68,7 +68,7 @@ export default function RootLayout() {
         <ThemeProvider
           theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
         >
-          <Stack initialRouteName={user.email ? "(tabs)" : "index"}>
+            <Stack initialRouteName={"index"}>
             <Stack.Screen name="index" options={{ headerShown: false }} />
             <Stack.Screen name="signup" options={{ headerShown: false }} />
             <Stack.Screen name="beverage" options={{ headerShown: false }} />
@@ -76,7 +76,7 @@ export default function RootLayout() {
           </Stack>
         </ThemeProvider>
       </SafeAreaView>
-      </AuthContext.Provider>
+      </AuthProvider>
     </ApplicationProvider>
   );
 }
