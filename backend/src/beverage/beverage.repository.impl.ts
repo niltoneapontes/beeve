@@ -14,6 +14,7 @@ export class BeveragesRepositoryImpl implements BeveragesRepository {
     type: string,
     rating: number,
     userId: number,
+    image: string,
   ): Promise<Beverage> {
     try {
       const newBeverage = await this.prisma.beverage.create({
@@ -24,6 +25,7 @@ export class BeveragesRepositoryImpl implements BeveragesRepository {
           type,
           rating,
           userId,
+          image,
         },
       });
 
@@ -42,6 +44,7 @@ export class BeveragesRepositoryImpl implements BeveragesRepository {
     type: string,
     rating: number,
     userId: number,
+    image: string,
   ): Promise<Beverage> {
     try {
       const updatedBeverage = await this.prisma.beverage.update({
@@ -55,6 +58,7 @@ export class BeveragesRepositoryImpl implements BeveragesRepository {
           type,
           rating,
           userId,
+          image,
         },
       });
       return updatedBeverage as unknown as Beverage;

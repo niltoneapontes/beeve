@@ -2,12 +2,16 @@ import {
   Body,
   Controller,
   Delete,
+  FileTypeValidator,
   Get,
   HttpStatus,
+  ParseFilePipe,
   Post,
   Put,
   Query,
   Res,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   BeverageDeleteQueryDTO,
@@ -17,6 +21,8 @@ import {
 import { Response } from 'express';
 import { BeverageService } from './beverage.service';
 import { observabilityMethods } from 'observability/methods';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { randomUUID } from 'crypto';
 
 @Controller('beverages')
 export class BeverageController {
@@ -37,6 +43,33 @@ export class BeverageController {
       });
     } finally {
       end();
+    }
+  }
+
+  @Post('/image')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadImage(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [new FileTypeValidator({ fileType: 'image/*' })],
+      }),
+    )
+    file: Express.Multer.File,
+    @Res() res: Response,
+  ) {
+    try {
+      const newFileName = `${randomUUID().toString()}-${file.originalname.toLowerCase().replaceAll(' ', '')}`;
+      await this.beverageService.uploadImage(newFileName, file.buffer);
+      const url = `https://beeve-beverages.s3.us-east-1.amazonaws.com/${newFileName}`;
+
+      return res.status(HttpStatus.CREATED).json({
+        url: url,
+      });
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: error.message || 'An error has occurred',
+        details: error.stack || error,
+      });
     }
   }
 

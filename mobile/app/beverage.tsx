@@ -1,7 +1,7 @@
-import React, { useContext, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { ButtonContainer, Container, TextContainer } from './styles/beverage'
 import Title from '@/components/Title'
-import { Image, View } from 'react-native'
+import { Image, Platform, TouchableOpacity, View } from 'react-native'
 import Background from '@/assets/images/background.png'
 import Button from '@/components/Button'
 import { useTheme } from '@react-navigation/native'
@@ -9,13 +9,15 @@ import Input from '@/components/Input'
 import { useNavigation } from 'expo-router'
 import { data, Selector } from '@/components/Selector'
 import Rating from '@/components/Rating'
-import Spacer from '@/components/Spacer'
 import { IndexPath } from '@ui-kitten/components'
+import { Feather } from '@expo/vector-icons'
+import * as ImagePicker from 'expo-image-picker'
 import { api, handleRequestError } from '@/api'
 import { AuthContext } from '@/context/auth'
 
 export default function ProductDetailScreen() {
   const theme = useTheme()
+  const [image, setImage] = useState<string>("")
   const [name, setName] = useState<string>("")
   const [description, setDescription] = useState<string>("")
   const [rating, setRating] = useState<number>(0)
@@ -27,8 +29,41 @@ export default function ProductDetailScreen() {
     user
   } = useContext(AuthContext);
 
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
 
-  const onSaveProduct = async () => {
+    if (!result.canceled && result.assets[0].uri) {
+      const formData = new FormData();
+
+      const image = result.assets[0]
+      
+      // @ts-ignore
+      formData.append('file', {
+        type: 'image/jpeg',
+        name: "beverage.jpg",
+        uri: image.uri,
+      });
+
+      try {
+        const response = await api.post('/beverages/image', formData, {
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "multipart/form-data"
+          }
+        });
+        setImage(response.data.url)
+      } catch(error) {
+        handleRequestError(error)
+      }
+    }
+  };
+
+  const onSaveProduct = useCallback(async () => {
     try {
       await api.post('/beverages', {
         createdAt: new Date().toISOString(),
@@ -36,7 +71,8 @@ export default function ProductDetailScreen() {
         name: name,
         rating: rating,
         type: data[type.row],
-        userId: user?.id || 0
+        userId: user?.id || 0,
+        image: image
       })
 
       clearFields()
@@ -44,21 +80,41 @@ export default function ProductDetailScreen() {
     } catch(error) {
       handleRequestError(error)
     }
-  }
+  }, [image, description, name, rating, type, user])
 
   const clearFields = () => {
     setName("")
     setDescription("")
     setRating(0)
     setType(new IndexPath(0))
+    setImage("")
   }
 
   return (
     <Container>
-      <Image source={Background} resizeMode="cover" style={{
-        width: "100%",
-        height: "50%"
-      }}/>
+      {image.length > 0 ? (
+        <Image source={{ uri: image }} resizeMode="cover" style={{
+          width: "100%",
+          height: "50%"
+        }}/>
+      ) : (
+        <Image source={Background} resizeMode="cover" style={{
+          width: "100%",
+          height: "50%"
+        }}/>
+      )}
+      <TouchableOpacity style={{
+        backgroundColor: theme.colors.primary,
+        marginTop: -28,
+        alignSelf: 'flex-end',
+        marginRight: 16,
+        padding: 12,
+        borderRadius: 28
+      }} onPress={() => {
+        pickImage()
+      }}>
+        <Feather name='upload' size={32} color={theme.colors.card} />
+      </TouchableOpacity>
       <TextContainer>
         <Title content='Avaliação' style={{ marginTop: 24, marginBottom: 8, fontSize: 32 }}/>
         <Input label="Nome da Bebida" value={name} onChangeText={setName}></Input>
