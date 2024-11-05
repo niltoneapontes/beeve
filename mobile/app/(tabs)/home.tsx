@@ -1,11 +1,11 @@
 import Card from "@/components/Card";
-import { FlatList, useColorScheme, View } from "react-native";
+import { FlatList, RefreshControl, useColorScheme, View } from "react-native";
 import Title from "@/components/Title";
 import Paragraph from "@/components/Paragraph";
 import { Container } from "../styles/homeStyle";
 import { DarkTheme, DefaultTheme } from "@/constants/Colors";
 import FloatingButton from "@/components/FloatingButton";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigation } from "expo-router";
 import { api, handleRequestError } from "@/api";
 import { AuthContext } from "@/context/auth";
@@ -23,26 +23,36 @@ export default function HomeScreen() {
   const navigation = useNavigation<any>()
 
   const [data, setData] = useState<Beverage[]>([] as Beverage[])
+  const [refreshing, setRefreshing] = useState(false);
+
   const {
     user
   } = useContext(AuthContext);
   
-  useEffect(() => {
-    const getBeverages = async () => {
-      try {
-        const response = await api.get('/beverages', {
-          params: {
-            userId: user?.id || 0
-          }
-        })
-        setData(response.data)
-      } catch(error) {
-        handleRequestError(error)
-      }
+  const getBeverages = async () => {
+    try {
+      const response = await api.get('/beverages', {
+        params: {
+          userId: user?.id || 0
+        }
+      })
+      setData(response.data)
+    } catch(error) {
+      handleRequestError(error)
     }
+  }
 
+  useEffect(() => {
     getBeverages()
   }, [])
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    getBeverages()
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
 
   return (
     <Container>
@@ -61,6 +71,9 @@ export default function HomeScreen() {
         ListFooterComponent={() => <View style={{ height: 88 }} />}
         keyExtractor={() => Math.random().toString()}
         key={Math.random().toString()}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         renderItem={({item}) => (
           <Card 
           key={Math.random().toString()} 

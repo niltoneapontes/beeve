@@ -1,4 +1,4 @@
-import { FlatList, Text, View } from 'react-native';
+import { FlatList, RefreshControl, Text, View } from 'react-native';
 import { Container } from '../styles/searchStyle';
 import Title from '@/components/Title';
 import Paragraph from '@/components/Paragraph';
@@ -6,7 +6,7 @@ import Card from '@/components/Card';
 import FloatingButton from '@/components/FloatingButton';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useNavigation } from 'expo-router';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import Background from '@/assets/images/background.png'
 import { DarkTheme, DefaultTheme } from '@/constants/Colors';
 import BeeveSearchBar from '@/components/SearchBar';
@@ -20,25 +20,26 @@ export default function TabTwoScreen() {
   const navigation = useNavigation<any>()
 
   const [data, setData] = useState<Beverage[]>([] as Beverage[])
+  const [refreshing, setRefreshing] = useState(false);
 
   const {
     user
   } = useContext(AuthContext);
   
-  useEffect(() => {
-    const getBeverages = async () => {
-      try {
-        const response = await api.get('/beverages', {
-          params: {
-            userId: user?.id || 0
-          }
-        })
-        setData(response.data)
-      } catch(error) {
-        handleRequestError(error)
-      }
+  const getBeverages = async () => {
+    try {
+      const response = await api.get('/beverages', {
+        params: {
+          userId: user?.id || 0
+        }
+      })
+      setData(response.data)
+    } catch(error) {
+      handleRequestError(error)
     }
+  }
 
+  useEffect(() => {
     getBeverages()
   }, [])
 
@@ -57,6 +58,14 @@ export default function TabTwoScreen() {
     }
   }
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    getBeverages()
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
   return (
     <Container>
       <Title content="Pesquisa" />
@@ -74,6 +83,9 @@ export default function TabTwoScreen() {
         ListFooterComponent={() => <View style={{ height: 88 }} />}
         keyExtractor={() => Math.random().toString()}
         key={Math.random().toString()}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         renderItem={({item}) => (
           <Card 
           key={Math.random().toString()} 
