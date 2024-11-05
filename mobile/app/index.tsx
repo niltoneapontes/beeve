@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { ButtonContainer, Container, TextContainer } from './styles/loginStyle'
 import Title from '@/components/Title'
 import { Image, Text, View } from 'react-native'
@@ -8,10 +8,10 @@ import Button from '@/components/Button'
 import Input from '@/components/Input'
 import { useNavigation } from 'expo-router'
 import { api, handleRequestError } from '@/api'
-import axios from 'axios'
 import { AuthContext } from '@/context/auth'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
+import LocalStorage from '@/utilities/localstorage'
 
 interface ILogin {
   email: string;
@@ -27,7 +27,8 @@ export default function LoginScreen() {
   });
 
   const {
-    setUser
+    user,
+    login
   } = useContext(AuthContext);
 
   const onSignin = async ({email, password}: ILogin) => {
@@ -39,14 +40,23 @@ export default function LoginScreen() {
 
       const loggedUser = response.data
 
-      if(setUser) {
-        setUser(loggedUser)
+      if(login) {
+        login(loggedUser)
       }
+
+      await LocalStorage.storeData("@eeve/user", JSON.stringify(loggedUser))
+
       navigation.navigate('(tabs)')
     } catch(error) {
       handleRequestError(error)
     }
   }
+
+  useEffect(() => {
+    if(user?.email) {
+      navigation.navigate('(tabs)')
+    }
+  }, [user])
 
   return (
     <Container>
