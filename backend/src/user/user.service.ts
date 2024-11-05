@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { User } from 'entities/user';
 import { UsersRepository } from './user.repository';
 import { UserDTO } from './user.dto';
+import { comparePassword, hashPassword } from 'utils/bcrypt';
 
 @Injectable()
 export class UserService {
@@ -28,7 +29,7 @@ export class UserService {
         createdAt,
         email,
         name,
-        password,
+        password: await hashPassword(password),
         socialAccountId,
         socialAccountProvider,
         username,
@@ -51,7 +52,7 @@ export class UserService {
         throw Error('E-mail não cadastrado');
       }
 
-      if (password != foundUserByEmail.password) {
+      if (!comparePassword(password, foundUserByEmail.password)) {
         throw Error('E-mail ou senha incorretos');
       }
 
@@ -79,7 +80,7 @@ export class UserService {
         createdAt,
         email,
         name,
-        password,
+        password: await hashPassword(password),
         socialAccountId,
         socialAccountProvider,
         username,

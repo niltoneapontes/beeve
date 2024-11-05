@@ -26,7 +26,6 @@ export class BeverageService {
     image,
   }: BeverageDTO): Promise<Beverage> {
     try {
-      console.log(image);
       const createdBeverage = await this.repository.create(
         createdAt,
         name,
