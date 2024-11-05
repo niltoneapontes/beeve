@@ -6,7 +6,7 @@ import { DarkTheme } from '@/constants/Colors';
 import SampleImage from '@/assets/images/sample.png'
 
 interface IButton {
-    image: ImageSourcePropType;
+    image: string;
     title: string;
     subtitle: string;
     rate: number;
@@ -30,7 +30,11 @@ function Card({ image, title, subtitle, rate, onPress }: IButton) {
 
   return (
     <Container onPress={onPress}>
-      <CardImage source={image || SampleImage} resizeMode='cover'></CardImage>
+      {image && image.length > 0 ? (
+        <CardImage source={{uri: image}} resizeMode='cover'></CardImage>
+      ): (
+        <CardImage source={SampleImage} resizeMode='cover'></CardImage>
+      )}
       <View>
         <CardTitle style={{ fontSize: 16 }}>{title}</CardTitle>
         <CardText style={{ fontSize: 16 }}>Tipo: {subtitle}</CardText>

@@ -13,7 +13,7 @@ import { ActivityIndicator } from "react-native-paper";
 import { AuthContext } from "@/context/auth";
 
 export interface Beverage {
-  image: ImageSourcePropType;
+  image: string;
   name: string;
   description: string;
   rating: number;
