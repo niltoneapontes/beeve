@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { ButtonContainer, Container, TextContainer } from './styles/beverage'
 import Title from '@/components/Title'
 import { Image, Platform, TouchableOpacity, View } from 'react-native'
@@ -22,6 +22,12 @@ export default function ProductDetailScreen() {
   const [description, setDescription] = useState<string>("")
   const [rating, setRating] = useState<number>(0)
   const [type, setType] = useState<IndexPath>(new IndexPath(0))
+
+  const navigation = useNavigation<any>()
+
+  const {
+    user
+  } = useContext(AuthContext);
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -57,14 +63,7 @@ export default function ProductDetailScreen() {
     }
   };
 
-  const navigation = useNavigation<any>()
-
-  const {
-    user
-  } = useContext(AuthContext);
-
-
-  const onSaveProduct = async () => {
+  const onSaveProduct = useCallback(async () => {
     try {
       await api.post('/beverages', {
         createdAt: new Date().toISOString(),
@@ -81,13 +80,14 @@ export default function ProductDetailScreen() {
     } catch(error) {
       handleRequestError(error)
     }
-  }
+  }, [image, description, name, rating, type, user])
 
   const clearFields = () => {
     setName("")
     setDescription("")
     setRating(0)
     setType(new IndexPath(0))
+    setImage("")
   }
 
   return (
