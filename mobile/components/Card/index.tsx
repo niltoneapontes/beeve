@@ -29,7 +29,7 @@ function Card({ image, title, subtitle, rate, onPress }: IButton) {
   }
 
   return (
-    <Container onPress={onPress}>
+    <Container onPress={onPress} activeOpacity={1}>
       {image && image.length > 0 ? (
         <CardImage source={{uri: image}} resizeMode='cover'></CardImage>
       ): (

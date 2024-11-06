@@ -1,5 +1,5 @@
 import Card from "@/components/Card";
-import { FlatList, RefreshControl, useColorScheme, View } from "react-native";
+import { Dimensions, FlatList, RefreshControl, TouchableOpacity, useColorScheme, View } from "react-native";
 import Title from "@/components/Title";
 import Paragraph from "@/components/Paragraph";
 import { Container } from "../styles/homeStyle";
@@ -10,6 +10,10 @@ import { useNavigation } from "expo-router";
 import { api, handleRequestError } from "@/api";
 import { AuthContext } from "@/context/auth";
 import EmptyList from "@/components/EmptyList";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
+import { useTheme } from "styled-components/native";
+import { Feather } from "@expo/vector-icons";
 
 export interface Beverage {
   id?: number;
@@ -20,17 +24,65 @@ export interface Beverage {
   rating: number;
 }
 
+const WINDOW_WIDTH = Dimensions.get('window').width
+const THRESHOLD = - WINDOW_WIDTH * 0.3
+
 export default function HomeScreen() {
   const colorScheme = useColorScheme()
   const navigation = useNavigation<any>()
+  const theme = useTheme()
 
   const [data, setData] = useState<Beverage[]>([] as Beverage[])
   const [refreshing, setRefreshing] = useState(false);
+
+  const offset = useSharedValue<number>(0);
+
+  const pan = Gesture.Pan()
+    .onBegin(() => {
+    })
+    .onChange((event) => {
+      if(event.translationX < THRESHOLD) {
+        console.log(event.handlerTag)
+        // deleteBeverages()
+      }
+      if(event.translationX < 0) {
+      offset.value = event.translationX;
+      }
+    })
+    .onFinalize(() => {
+      offset.value = withSpring(0);
+    });
+
+    const animatedStyles = useAnimatedStyle(() => ({
+      opacity: 1,
+      transform: [
+        { translateX: offset.value },
+      ],
+      borderRadius: 8,
+      backgroundColor: theme.grey
+    }));
 
   const {
     user,
     token
   } = useContext(AuthContext);
+
+  const deleteBeverages = async (beverage: Beverage) => {
+    try {
+      await api.delete('/beverages', {
+        params: {
+          id: beverage.id
+        },
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      const newBeverageList = data.filter(item => item.id != beverage.id)
+      setData(newBeverageList)
+    } catch(error) {
+      handleRequestError(error)
+    }
+  }
   
   const getBeverages = async () => {
     try {
@@ -85,17 +137,28 @@ export default function HomeScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         renderItem={({item}) => (
-          <Card 
-          key={Math.random().toString()} 
-          image={item.image} 
-          title={item.name} 
-          subtitle={item.type} 
-          rate={item.rating} 
-          onPress={() => {
-            navigation.navigate("beverage" as never, {
-              beverage: item
-            } as never)
-          }} />
+          <>
+          <Feather name='trash' size={40} color={theme.danger} style={{
+            position: "absolute",
+            right: 0,
+            top: 28
+          }}/>
+          <GestureDetector gesture={pan} key={item.id}>
+            <Animated.View style={animatedStyles}>
+              <Card 
+                key={Math.random().toString()} 
+                image={item.image} 
+                title={item.name} 
+                subtitle={item.type} 
+                rate={item.rating} 
+                onPress={() => {
+                  navigation.navigate("beverage" as never, {
+                    beverage: item
+                  } as never)
+                }} />
+            </Animated.View>
+          </GestureDetector>
+          </>
         )}
       />
       <FloatingButton iconName='plus' onPress={() => {
