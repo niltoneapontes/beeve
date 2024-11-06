@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { Container, Header, PictureContainer, ProfileImage } from '../styles/profileStyle';
 import Title from '@/components/Title';
 import Paragraph from '@/components/Paragraph';
@@ -16,6 +16,7 @@ import LocalStorage from '@/utilities/localstorage';
 import { Modal } from 'react-native-paper';
 import { useNavigation } from 'expo-router';
 import Toast from 'react-native-toast-message';
+import { showToast } from '@/utilities/toast';
 
 export default function TabThreeScreen() {
   const [showModal, setShowModal] = useState(false);
@@ -38,19 +39,7 @@ export default function TabThreeScreen() {
           setSelectedAvatar(value)
         }
       } catch(error) {
-        Toast.show({
-          type: 'error',
-          text1: 'Oops...',
-          text2: "Não foi possível buscar seu avatar :(",
-          text1Style: {
-            fontSize: 16,
-            fontFamily: 'OpenSans'
-          },
-          text2Style: {
-            fontSize: 16,
-            fontFamily: 'OpenSans'
-          }
-        })
+        showToast('error', 'Oops...', 'Não foi possível buscar seu avatar :(')
       }
     }
 
@@ -62,19 +51,7 @@ export default function TabThreeScreen() {
       setSelectedAvatar(avatar)
       await LocalStorage.storeData("@eeve/avatar", avatar)
     } catch(error) {
-      Toast.show({
-        type: 'error',
-        text1: 'Oops...',
-        text2: "Não foi possível salvar seu avatar :(",
-        text1Style: {
-          fontSize: 16,
-          fontFamily: 'OpenSans'
-        },
-        text2Style: {
-          fontSize: 16,
-          fontFamily: 'OpenSans'
-        }
-      })
+      showToast('error', 'Oops...', "Não foi possível salvar seu avatar :(")
     }
   }
 
