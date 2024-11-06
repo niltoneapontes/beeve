@@ -1,7 +1,6 @@
-import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { styled } from 'styled-components/native'
 
-export const Container = styled(GestureHandlerRootView)`
+export const Container = styled.View`
     background-color: ${props => props.theme.backgroundColor};
     display: flex;
     flex-direction: column;

@@ -34,7 +34,7 @@ export const DefaultTheme = {
   white: "#F5F5F5",
   black: "#1C1C1C",
   brightWhite: '#FFFFFF',
-  danger: "#ff0000",
-  success: "#00ff00",
-  warning: "#ff9900",
+  danger: "#ff5555",
+  success: "#28a745",
+  warning: "#ffc107",
 };

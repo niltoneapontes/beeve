@@ -1,5 +1,5 @@
 import Card from "@/components/Card";
-import { FlatList, RefreshControl, useColorScheme, View } from "react-native";
+import { Dimensions, FlatList, RefreshControl, TouchableOpacity, useColorScheme, View } from "react-native";
 import Title from "@/components/Title";
 import Paragraph from "@/components/Paragraph";
 import { Container } from "../styles/homeStyle";
@@ -10,6 +10,10 @@ import { useNavigation } from "expo-router";
 import { api, handleRequestError } from "@/api";
 import { AuthContext } from "@/context/auth";
 import EmptyList from "@/components/EmptyList";
+import { Gesture, GestureDetector, GestureHandlerRootView } from "react-native-gesture-handler";
+import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
+import { useTheme } from "styled-components/native";
+import { Feather } from "@expo/vector-icons";
 
 export interface Beverage {
   id?: number;
@@ -31,6 +35,23 @@ export default function HomeScreen() {
     user,
     token
   } = useContext(AuthContext);
+
+  const deleteBeverages = async (beverage: Beverage) => {
+    try {
+      await api.delete('/beverages', {
+        params: {
+          id: beverage.id
+        },
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      const newBeverageList = data.filter(item => item.id != beverage.id)
+      setData(newBeverageList)
+    } catch(error) {
+      handleRequestError(error)
+    }
+  }
   
   const getBeverages = async () => {
     try {
@@ -85,17 +106,20 @@ export default function HomeScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         renderItem={({item}) => (
-          <Card 
-          key={Math.random().toString()} 
-          image={item.image} 
-          title={item.name} 
-          subtitle={item.type} 
-          rate={item.rating} 
-          onPress={() => {
-            navigation.navigate("beverage" as never, {
-              beverage: item
-            } as never)
-          }} />
+              <Card 
+                key={Math.random().toString()} 
+                image={item.image} 
+                title={item.name} 
+                subtitle={item.type} 
+                rate={item.rating} 
+                onPress={() => {
+                  navigation.navigate("beverage" as never, {
+                    beverage: item
+                  } as never)
+                }}
+                onDelete={() => {
+                  deleteBeverages(item)
+                }} />
         )}
       />
       <FloatingButton iconName='plus' onPress={() => {
