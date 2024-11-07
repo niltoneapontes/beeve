@@ -12,7 +12,10 @@ import { AuthContext } from '@/context/auth'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
 import LocalStorage from '@/utilities/localstorage'
-import Toast from 'react-native-toast-message'
+import * as ConfigCat from "configcat-js";
+import { showToast } from '@/utilities/toast'
+
+const configCatClient = ConfigCat.getClient("configcat-sdk-1/Of_cCLrpcUuFjcbMTxku1g/8bgId2wuH0qQw1W0by6Twg");
 
 interface ILogin {
   email: string;
@@ -21,11 +24,21 @@ interface ILogin {
 
 export default function LoginScreen() {
   const navigation = useNavigation<any>()
+  const [isAppAvailable, setIsAppAvailable] = useState(true);
 
   const validationSchema = Yup.object().shape({
     email: Yup.string().email('Digite um e-mail válido').required('Preencha o e-mail'),
     password: Yup.string().required('Preencha a senha'),
   });
+
+  const getMainFeatureFlag = async () => {
+    try {
+      const flag = await configCatClient.getValueAsync("isAppAvailable", true);
+      setIsAppAvailable(flag)
+    } catch {
+      showToast('error', 'Oops...', 'Tivemos um problema')
+    }
+  }
 
   const {
     user,
@@ -53,11 +66,18 @@ export default function LoginScreen() {
     }
   }
 
+
   useEffect(() => {
-    if(user?.email) {
+    getMainFeatureFlag()
+  }, [])
+
+  useEffect(() => {
+    if(!isAppAvailable) {
+      navigation.navigate('+not-found')
+    } else if(user?.email) {
       navigation.navigate('(tabs)')
     }
-  }, [user])
+  }, [user, isAppAvailable])
 
   return (
     <Container>
