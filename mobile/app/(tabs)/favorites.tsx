@@ -10,12 +10,13 @@ import { api, handleRequestError } from "@/api";
 import { AuthContext } from "@/context/auth";
 import EmptyList from "@/components/EmptyList";
 import { useDispatch, useSelector } from "react-redux";
-import { FavoritesState, removeFavorite } from "@/redux/ducks/favorites";
+import { removeFavorite } from "@/redux/ducks/favorites";
+import { RootState } from "@/redux/store";
 
 export default function FavoritesScreen() {
   const colorScheme = useColorScheme()
   const navigation = useNavigation<any>()
-  const beverages = useSelector((state: FavoritesState) => state.beverages)
+  const beverages = useSelector((state: RootState) => state.favorites)
   const dispatch = useDispatch()
 
   const {
@@ -32,15 +33,11 @@ export default function FavoritesScreen() {
           'Authorization': `Bearer ${token}`
         }
       })
-      dispatch(removeFavorite({ id: beverage.id }))
+      dispatch(removeFavorite({ id: beverage.id!! }))
     } catch(error) {
       handleRequestError(error)
     }
   }
-
-  useEffect(() => {
-    console.log(beverages)
-  }, [beverages])
 
   return (
     <Container>

@@ -1,32 +1,25 @@
-export interface FavoritesState {
-    beverages: Beverage[]
-}
-
-const INITIAL_STATE: FavoritesState = {
-    beverages: [] as Beverage[]
-}
+const INITIAL_STATE: Beverage[] = []
 
 // action types
 export const ADD_FAVORITE = 'favorites/add'
 export const REMOVE_FAVORITE = 'favorites/remove'
+export const CLEAN_FAVORITES = 'favorites/clean'
 
 // reducer
 export function favoritesReducer(state = INITIAL_STATE, action: {
     type: string;
     payload: any;
-}) {
+}): Beverage[] {
     switch(action.type) {
         case ADD_FAVORITE:
-            console.log(action.payload)
-            return {
+            return [
                 ...state,
-                beverages: [...state.beverages, action.payload]
-            }
+                action.payload
+            ]
         case REMOVE_FAVORITE:
-            return {
-                ...state,
-                beverages: state.beverages.filter(beverage => beverage.id !== action.payload.id)
-            }
+            return state.filter(beverage => beverage.id !== action.payload.id)
+        case CLEAN_FAVORITES:
+            return []  
         default: 
             return state;
     }
@@ -48,3 +41,11 @@ export const removeFavorite = (payload: { id: number }) => ({
         reducer: favoritesReducer
     }
 })
+
+export const cleanFavorites = () => ({
+    type: CLEAN_FAVORITES,
+    meta: {
+        reducer: favoritesReducer
+    }
+})
+

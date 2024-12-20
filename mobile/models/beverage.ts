@@ -1,5 +1,5 @@
 type Beverage = {
-    id: number;
+    id?: number;
     createdAt: string;
     description: string;
     name: string;

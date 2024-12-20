@@ -10,15 +10,16 @@ import { useNavigation } from "expo-router";
 import { api, handleRequestError } from "@/api";
 import { AuthContext } from "@/context/auth";
 import EmptyList from "@/components/EmptyList";
-import { useDispatch } from "react-redux";
-import { addFavorite } from "@/redux/ducks/favorites";
+import { useDispatch, useSelector } from "react-redux";
+import { addFavorite, cleanFavorites } from "@/redux/ducks/favorites";
+import { fetchBeveragesRequest } from "@/redux/ducks/beverages";
 
 export default function HomeScreen() {
   const colorScheme = useColorScheme()
   const navigation = useNavigation<any>()
   const dispatch = useDispatch()
-
-  const [data, setData] = useState<Beverage[]>([] as Beverage[])
+  const beverages = useSelector((state: any) => state.beverages)
+  
   const [refreshing, setRefreshing] = useState(false);
 
   const {
@@ -36,48 +37,32 @@ export default function HomeScreen() {
           'Authorization': `Bearer ${token}`
         }
       })
-      const newBeverageList = data.filter(item => item.id != beverage.id)
-      setData(newBeverageList)
+      // do saga actions to delete
     } catch(error) {
       handleRequestError(error)
     }
   }
   
-  const getBeverages = async (): Promise<Beverage[]> => {
-    try {
-      const response = await api.get('/beverages', {
-        params: {
-          userId: user?.id || 0
-        },
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      setData(response.data)
-      return response.data
-    } catch(error) {
-      handleRequestError(error)
-      return []
-    }
+  const getBeverages = async () => {
+    dispatch(cleanFavorites())
+
+    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    dispatch(fetchBeveragesRequest({ userId: user?.id!! }))
   }
 
   useEffect(() => {
-    setRefreshing(true)
-    setTimeout(async () => {
-      const response = await getBeverages()
-      setRefreshing(false)
-      response.forEach((beverage: Beverage) => {
+    onRefresh()
+  }, [])
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    getBeverages()
+    setTimeout(() => {
+      beverages.forEach((beverage: Beverage) => {
         if(beverage.rating === 5) {
           dispatch(addFavorite(beverage))
         }
       })
-    }, 2000)
-  }, [])
-
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true);
-    await getBeverages()
-    setTimeout(() => {
       setRefreshing(false);
     }, 2000);
   }, []);
@@ -92,7 +77,7 @@ export default function HomeScreen() {
           marginTop: 16,
           backgroundColor: colorScheme === 'dark' ? DarkTheme.backgroundColor : DefaultTheme.backgroundColor
         }}
-        data={data}
+        data={beverages}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={refreshing ? null : <EmptyList />}
         ItemSeparatorComponent={() => <View style={{ height: 12 }} />}

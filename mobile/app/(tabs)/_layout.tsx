@@ -5,13 +5,12 @@ import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { useTheme } from 'styled-components/native';
 import { Badge } from '@/components/Badge';
 import { View } from 'react-native';
-import { store } from '@/redux/store';
+import { RootState } from '@/redux/store';
 import { useSelector } from 'react-redux';
-import { FavoritesState } from '@/redux/ducks/favorites';
 
 export default function TabLayout() {
   const theme = useTheme()
-  const badgeCount = useSelector((state: FavoritesState) => state.beverages.length)
+  const badgeCount = useSelector((state: RootState) => state.favorites.length)
 
   return (
         <Tabs

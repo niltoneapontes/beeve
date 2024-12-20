@@ -1,9 +1,14 @@
-import { legacy_createStore } from "redux";
-import { favoritesReducer } from "../ducks/favorites";
+import { applyMiddleware, legacy_createStore } from "redux";
 import createSagaMiddleware from "redux-saga";
+import { beveragesSaga } from "../sagas/beverages";
+import { rootReducer } from "./rootReducer";
 
 const sagaMiddleware = createSagaMiddleware()
 
-export const store = legacy_createStore(favoritesReducer)
+export type RootState = ReturnType<typeof rootReducer>;
+
+export const store = legacy_createStore(rootReducer, applyMiddleware(sagaMiddleware))
+
+sagaMiddleware.run(beveragesSaga)
 
 store.subscribe(() => console.log(store.getState()))

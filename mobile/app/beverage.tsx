@@ -18,6 +18,7 @@ import { Formik } from 'formik'
 import * as Yup from 'yup';
 import { useDispatch } from 'react-redux'
 import { addFavorite } from '@/redux/ducks/favorites'
+import { addBeveragesRequest } from '@/redux/ducks/beverages'
 
 interface ISaveProduct {
   name: string;
@@ -91,43 +92,42 @@ export default function ProductDetailScreen() {
   };
 
   const onSaveProduct = useCallback(async ({name, description}: ISaveProduct) => {
+    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
     try {
       if(beverage) {
-        const response = await api.put('/beverages', {
-          id: beverage.id,
-          createdAt: new Date().toISOString(),
-          description: description,
-          name: name,
-          rating: rating,
-          type: data[type.row],
-          userId: user?.id || 0,
-          image: image
-        }, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        })
-
-        if(rating === 5) {
-          dispatch(addFavorite(response.data))
-        }
+        dispatch(addBeveragesRequest({
+            id: beverage.id,
+            createdAt: new Date().toISOString(),
+            description: description,
+            name: name,
+            rating: rating,
+            type: data[type.row],
+            userId: user?.id || 0,
+            image: image,
+          }))
       } else {
-        const response = await api.post('/beverages', {
-          createdAt: new Date().toISOString(),
-          description: description,
-          name: name,
-          rating: rating,
-          type: data[type.row],
-          userId: user?.id || 0,
-          image: image
-        }, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        })
+        dispatch(addBeveragesRequest({
+            createdAt: new Date().toISOString(),
+            description: description,
+            name: name,
+            rating: rating,
+            type: data[type.row],
+            userId: user?.id || 0,
+            image: image
+          }))
 
         if(rating === 5) {
-          dispatch(addFavorite(response.data))
+          dispatch(addFavorite({
+            id: undefined,
+            createdAt: new Date().toISOString(),
+            description: description,
+            name: name,
+            rating: rating,
+            type: data[type.row],
+            userId: user?.id || 0,
+            image: image,
+          }))
         }
       }
 
