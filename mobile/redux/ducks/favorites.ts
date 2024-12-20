@@ -8,6 +8,7 @@ const INITIAL_STATE: FavoritesState = {
 
 // action types
 export const ADD_FAVORITE = 'favorites/add'
+export const ADD_FAVORITE_ASYNC = 'favorites/add_async'
 export const REMOVE_FAVORITE = 'favorites/remove'
 
 // reducer
@@ -43,6 +44,14 @@ export const addFavorite = (payload: Beverage) => ({
 
 export const removeFavorite = (payload: { id: number }) => ({
     type: REMOVE_FAVORITE,
+    payload,
+    meta: {
+        reducer: favoritesReducer
+    }
+})
+
+export const addFavoriteAsync = (payload: Beverage) => ({
+    type: ADD_FAVORITE_ASYNC,
     payload,
     meta: {
         reducer: favoritesReducer
