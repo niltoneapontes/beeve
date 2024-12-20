@@ -3,9 +3,15 @@ import React from 'react';
 
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { useTheme } from 'styled-components/native';
+import { Badge } from '@/components/Badge';
+import { View } from 'react-native';
+import { store } from '@/redux/store';
+import { useSelector } from 'react-redux';
+import { FavoritesState } from '@/redux/ducks/favorites';
 
 export default function TabLayout() {
   const theme = useTheme()
+  const badgeCount = useSelector((state: FavoritesState) => state.beverages.length)
 
   return (
         <Tabs
@@ -37,11 +43,23 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
+          name="favorites"
+          options={{
+            title: 'Favoritas',
+            tabBarIcon: ({ color, focused }) => (
+              <View>
+                <TabBarIcon name='star' color={color} />
+                <Badge count={badgeCount}></Badge>
+              </View>
+            ),
+          }}
+        />
+        <Tabs.Screen
           name="profile"
           options={{
             title: 'Perfil',
             tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon name='user' color={color} />
+                <TabBarIcon name='user' color={color} />
             ),
           }}
         />

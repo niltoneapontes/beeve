@@ -7,10 +7,8 @@ import FloatingButton from '@/components/FloatingButton';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { useNavigation } from 'expo-router';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import Background from '@/assets/images/background.png'
 import { DarkTheme, DefaultTheme } from '@/constants/Colors';
 import BeeveSearchBar from '@/components/SearchBar';
-import { Beverage } from './home';
 import { AuthContext } from '@/context/auth';
 import { api, handleRequestError } from '@/api';
 import EmptyList from '@/components/EmptyList';
@@ -46,6 +44,23 @@ export default function TabTwoScreen() {
   useEffect(() => {
     getBeverages()
   }, [])
+
+  const deleteBeverages = async (beverage: Beverage) => {
+    try {
+      await api.delete('/beverages', {
+        params: {
+          id: beverage.id
+        },
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      const newBeverageList = data.filter(item => item.id != beverage.id)
+      setData(newBeverageList)
+    } catch(error) {
+      handleRequestError(error)
+    }
+  }
 
   const filterBeverages = async (search: string) => {
     try {
@@ -102,7 +117,11 @@ export default function TabTwoScreen() {
           rate={item.rating} 
           onPress={() => {
             navigation.navigate("beverage", {})
-          }} />
+          }}
+          onDelete={() => {
+            deleteBeverages(item)
+          }}
+           />
         )}
       />
       <FloatingButton iconName='plus' onPress={() => {

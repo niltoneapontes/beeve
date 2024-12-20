@@ -14,6 +14,8 @@ import { SafeAreaView } from "react-native";
 import { ApplicationProvider } from "@ui-kitten/components";
 import { AuthProvider } from "@/context/auth";
 import Toast from "react-native-toast-message";
+import { Provider } from "react-redux";
+import { store } from "@/redux/store";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -52,6 +54,7 @@ export default function RootLayout() {
 
   return (
     <>
+        <Provider store={store}>
       <ApplicationProvider {...eva} theme={{...(colorScheme === "dark" ? eva.dark : eva.light), ...themeExtension}}>
         <AuthProvider>
         <SafeAreaView
@@ -78,6 +81,7 @@ export default function RootLayout() {
         </AuthProvider>
       </ApplicationProvider>
       <Toast />
+      </Provider>
     </>
   );
 }

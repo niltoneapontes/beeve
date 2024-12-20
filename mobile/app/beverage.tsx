@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { ButtonContainer, Container, TextContainer } from './styles/beverage'
 import Title from '@/components/Title'
-import { Image, Platform, Text, TouchableOpacity, View } from 'react-native'
+import { Image, Text, TouchableOpacity, View } from 'react-native'
 import Background from '@/assets/images/background.png'
 import Button from '@/components/Button'
 import { useRoute, useTheme } from '@react-navigation/native'
@@ -16,6 +16,8 @@ import { api, handleRequestError } from '@/api'
 import { AuthContext } from '@/context/auth'
 import { Formik } from 'formik'
 import * as Yup from 'yup';
+import { useDispatch } from 'react-redux'
+import { addFavorite } from '@/redux/ducks/favorites'
 
 interface ISaveProduct {
   name: string;
@@ -29,6 +31,7 @@ export default function ProductDetailScreen() {
   const [type, setType] = useState<IndexPath>(new IndexPath(0))
 
   const navigation = useNavigation<any>()
+  const dispatch = useDispatch()
 
   const route = useRoute();
   // @ts-ignore
@@ -90,7 +93,7 @@ export default function ProductDetailScreen() {
   const onSaveProduct = useCallback(async ({name, description}: ISaveProduct) => {
     try {
       if(beverage) {
-        await api.put('/beverages', {
+        const response = await api.put('/beverages', {
           id: beverage.id,
           createdAt: new Date().toISOString(),
           description: description,
@@ -104,8 +107,12 @@ export default function ProductDetailScreen() {
             'Authorization': `Bearer ${token}`
           }
         })
+
+        if(rating === 5) {
+          dispatch(addFavorite(response.data))
+        }
       } else {
-        await api.post('/beverages', {
+        const response = await api.post('/beverages', {
           createdAt: new Date().toISOString(),
           description: description,
           name: name,
@@ -118,6 +125,10 @@ export default function ProductDetailScreen() {
             'Authorization': `Bearer ${token}`
           }
         })
+
+        if(rating === 5) {
+          dispatch(addFavorite(response.data))
+        }
       }
 
       clearFields()

@@ -1,7 +1,6 @@
 import { showToast } from "@/utilities/toast";
 import axios from "axios";
 import { Platform } from "react-native";
-import Toast from "react-native-toast-message";
 
 export const api = axios.create({
     baseURL: `http://${Platform.OS == 'android' ? '10.0.2.2' : 'localhost'}:3000`,
