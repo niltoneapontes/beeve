@@ -11,7 +11,7 @@ import { api, handleRequestError } from "@/api";
 import { AuthContext } from "@/context/auth";
 import EmptyList from "@/components/EmptyList";
 import { useDispatch } from "react-redux";
-import { addFavorite, addFavoriteAsync } from "@/redux/ducks/favorites";
+import { addFavorite } from "@/redux/ducks/favorites";
 
 export default function HomeScreen() {
   const colorScheme = useColorScheme()
@@ -68,7 +68,7 @@ export default function HomeScreen() {
       setRefreshing(false)
       response.forEach((beverage: Beverage) => {
         if(beverage.rating === 5) {
-          dispatch(addFavoriteAsync(beverage))
+          dispatch(addFavorite(beverage))
         }
       })
     }, 2000)
