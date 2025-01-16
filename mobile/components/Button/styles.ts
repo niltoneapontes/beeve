@@ -18,6 +18,6 @@ export const Container = styled.TouchableOpacity<ButtonProps>`
 `
 
 export const ButtonText = styled.Text<ButtonTextProps>`
-    color: ${props => props.theme[props.textColor] ?? props.theme.primary};
+    color: ${({theme, ...props}) => theme[props.textColor] ?? theme.primary};
     font-family: 'Raleway';
 `

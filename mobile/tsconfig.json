@@ -13,6 +13,7 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
-    "typings/custom.d.ts"
-, "app/login.tjsx"  ]
+    "@types/custom.d.ts",
+    "@types/styled.d.ts"
+,   "app/login.tjsx"  ]
 }
